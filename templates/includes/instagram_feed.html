@@ -1,0 +1,68 @@
+{% if posts %}
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    {% for post in posts %}
+    <a href="{{ post.permalink }}" 
+       target="_blank"
+       rel="noopener noreferrer"
+       class="relative group overflow-hidden rounded-lg aspect-square bg-gray-100">
+        
+        <!-- Bild/Video thumbnail -->
+        {% if post.media_type == 'VIDEO' or post.media_type == 'CAROUSEL_ALBUM' %}
+            <img src="{{ post.thumbnail_url|default:post.media_url }}" 
+                 alt="Instagram post"
+                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                 loading="lazy">
+        {% else %}
+            <img src="{{ post.media_url }}" 
+                 alt="Instagram post"
+                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                 loading="lazy">
+        {% endif %}
+        
+        <!-- Video/Carousel indicator -->
+        {% if post.media_type == 'VIDEO' %}
+        <div class="absolute top-3 right-3 bg-black/70 backdrop-blur-sm rounded-full p-2 shadow-lg">
+            <i data-lucide="play" class="w-4 h-4 text-white"></i>
+        </div>
+        {% elif post.media_type == 'CAROUSEL_ALBUM' %}
+        <div class="absolute top-3 right-3 bg-black/70 backdrop-blur-sm rounded-full p-2 shadow-lg">
+            <i data-lucide="images" class="w-4 h-4 text-white"></i>
+        </div>
+        {% endif %}
+        
+        <!-- Hover overlay med gradient -->
+        <div class="absolute inset-0 bg-gradient-to-t from-primary-900/80 via-primary-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+            {% if post.caption %}
+            <p class="text-white text-sm font-medium line-clamp-2 mb-2">
+                {{ post.caption|truncatewords:15 }}
+            </p>
+            {% endif %}
+            <div class="flex items-center gap-2 text-white/90 text-xs">
+                <i data-lucide="instagram" class="w-3 h-3"></i>
+                <span>Se på Instagram</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+<div class="text-center mt-8">
+    <a href="https://instagram.com/harpans_redovisning" 
+       target="_blank"
+       rel="noopener noreferrer"
+       class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-secondary-500 text-white font-semibold rounded-lg hover:shadow-glow-primary hover:scale-105 transition-all group">
+        <i data-lucide="instagram" class="w-5 h-5"></i>
+        <span>Följ @harpans_redovisning</span>
+        <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+    </a>
+</div>
+{% else %}
+<div class="text-center py-12 text-gray-500">
+    <i data-lucide="instagram" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+    <p>Inga Instagram-inlägg att visa just nu</p>
+</div>
+{% endif %}
+
+<script>
+    lucide.createIcons();
+</script>

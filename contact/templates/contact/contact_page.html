@@ -1,0 +1,517 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags static wagtailsettings_tags %}
+{% get_settings %}
+
+{% block content %}
+
+{# HERO – enkel, brandad, konsekvent med övriga sidor #}
+<section class="py-16 md:py-20 bg-background border-b border-primary-100">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto text-center fade-in-scroll">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-primary-800">
+                {{ page.title }}
+            </h1>
+            {% if page.intro %}
+            <div class="text-lg md:text-xl text-gray-700 leading-relaxed prose prose-lg mx-auto">
+                {{ page.intro|richtext }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{# CALLBACK-SEKTION – tydlig CTA med gradientband + vit card #}
+<section class="py-16 bg-gradient-primary">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="phone-call" class="w-8 h-8 text-primary-800"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-primary-800 mb-3">
+                    Vill du bli uppringd?
+                </h2>
+                <p class="text-gray-600">
+                    Lämna dina uppgifter så ringer vi upp dig inom 24 timmar.
+                </p>
+            </div>
+            
+            <form 
+                hx-post="/api/callback-request/" 
+                hx-target="#callback-response"
+                hx-swap="innerHTML"
+                class="space-y-6"
+            >
+                {% csrf_token %}
+                
+                <!-- Namn -->
+                <div>
+                    <label for="callback-name" class="form-label">
+                        <i data-lucide="user" class="w-4 h-4 inline mr-1"></i>
+                        Namn *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="callback-name"
+                        name="name"
+                        required
+                        class="form-input"
+                        placeholder="Ditt fullständiga namn"
+                    >
+                </div>
+                
+                <!-- Telefon -->
+                <div>
+                    <label for="callback-phone" class="form-label">
+                        <i data-lucide="phone" class="w-4 h-4 inline mr-1"></i>
+                        Telefonnummer *
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="callback-phone"
+                        name="phone"
+                        required
+                        class="form-input"
+                        placeholder="070-123 45 67"
+                        pattern="[0-9\s\-\+]+"
+                    >
+                </div>
+                
+                <!-- Email (optional) -->
+                <div>
+                    <label for="callback-email" class="form-label">
+                        <i data-lucide="mail" class="w-4 h-4 inline mr-1"></i>
+                        E-post (valfritt)
+                    </label>
+                    <input 
+                        type="email" 
+                        id="callback-email"
+                        name="email"
+                        class="form-input"
+                        placeholder="din@email.se"
+                    >
+                </div>
+                
+                <!-- Bästa tid att ringa -->
+                <div>
+                    <label for="callback-time" class="form-label">
+                        <i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>
+                        Bästa tid att ringa
+                    </label>
+                    <select 
+                        id="callback-time"
+                        name="preferred_time"
+                        class="form-input"
+                    >
+                        <option value="">Välj tid...</option>
+                        <option value="morning">Förmiddag (08:00-12:00)</option>
+                        <option value="afternoon">Eftermiddag (12:00-17:00)</option>
+                        <option value="anytime">Spelar ingen roll</option>
+                    </select>
+                </div>
+                
+                <!-- Meddelande -->
+                <div>
+                    <label for="callback-message" class="form-label">
+                        <i data-lucide="message-square" class="w-4 h-4 inline mr-1"></i>
+                        Vad gäller det? (valfritt)
+                    </label>
+                    <textarea 
+                        id="callback-message"
+                        name="message"
+                        rows="4"
+                        class="form-input resize-none"
+                        placeholder="Berätta kort vad du behöver hjälp med..."
+                    ></textarea>
+                </div>
+                
+                <!-- Submit Button -->
+                <div>
+                    <button 
+                        type="submit"
+                        class="btn-primary w-full text-lg py-4 flex items-center justify-center gap-2"
+                    >
+                        <i data-lucide="phone-outgoing" class="w-5 h-5"></i>
+                        Skicka förfrågan
+                    </button>
+                </div>
+                
+                <!-- Response Message -->
+                <div id="callback-response" class="mt-4"></div>
+                
+                <!-- GDPR Notice -->
+                <p class="text-xs text-gray-500 text-center">
+                    Genom att skicka formuläret godkänner du att vi kontaktar dig.
+                    Vi hanterar dina uppgifter enligt 
+                    <a href="/integritetspolicy/" class="text-primary-800 underline">vår integritetspolicy</a>.
+                </p>
+            </form>
+        </div>
+    </div>
+</section>
+
+{# KONTAKT + INFO – två kolumner, vita kort på vit bg #}
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            
+            <!-- Kontaktformulär -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all fade-in-scroll">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl flex items-center justify-center shadow-md">
+                        <i data-lucide="send" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-primary-800">Skicka ett meddelande</h2>
+                </div>
+                
+                <form hx-post="{% url 'contact_submit' %}"
+                      hx-swap="innerHTML"
+                      hx-target="#form-response"
+                      class="space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="page_id" value="{{ page.id }}">
+                    
+                    <!-- Namn -->
+                    <div class="form-group">
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            <span class="flex items-center gap-2">
+                                <i data-lucide="user" class="w-4 h-4 text-primary-600"></i>
+                                Namn *
+                            </span>
+                        </label>
+                        <input type="text" 
+                               name="name" 
+                               required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none"
+                               placeholder="Ditt namn">
+                    </div>
+                    
+                    <!-- E-post -->
+                    <div class="form-group">
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            <span class="flex items-center gap-2">
+                                <i data-lucide="mail" class="w-4 h-4 text-accent-600"></i>
+                                E-post *
+                            </span>
+                        </label>
+                        <input type="email" 
+                               name="email" 
+                               required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-accent-600 focus:ring-4 focus:ring-accent-100 transition-all outline-none"
+                               placeholder="din@email.se">
+                    </div>
+                    
+                    <!-- Telefon -->
+                    <div class="form-group">
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            <span class="flex items-center gap-2">
+                                <i data-lucide="phone" class="w-4 h-4 text-accent-600"></i>
+                                Telefon
+                            </span>
+                        </label>
+                        <input type="tel" 
+                               name="phone"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-accent-600 focus:ring-4 focus:ring-accent-100 transition-all outline-none"
+                               placeholder="070-123 45 67">
+                    </div>
+                    
+                    <!-- Ämne -->
+                    <div class="form-group">
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            <span class="flex items-center gap-2">
+                                <i data-lucide="tag" class="w-4 h-4 text-primary-600"></i>
+                                Ämne
+                            </span>
+                        </label>
+                        <input type="text" 
+                               name="subject"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none"
+                               placeholder="Vad gäller din förfrågan?">
+                    </div>
+                    
+                    <!-- Meddelande -->
+                    <div class="form-group">
+                        <label class="block text-sm font-semibold mb-2 text-gray-700">
+                            <span class="flex items-center gap-2">
+                                <i data-lucide="message-square" class="w-4 h-4 text-accent-600"></i>
+                                Meddelande *
+                            </span>
+                        </label>
+                        <textarea name="message" 
+                                  rows="5" 
+                                  required
+                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none resize-none"
+                                  placeholder="Berätta mer om hur vi kan hjälpa dig..."></textarea>
+                    </div>
+                    
+                    <!-- GDPR-checkbox -->
+                    <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <input type="checkbox" 
+                               name="gdpr_consent" 
+                               required
+                               id="gdpr-checkbox"
+                               class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500 mt-0.5">
+                        <label for="gdpr-checkbox" class="text-sm text-gray-700 leading-relaxed">
+                            {{ page.gdpr_text|striptags }}
+                        </label>
+                    </div>
+                    
+                    <!-- Skicka-knapp -->
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-primary-700 to-primary-500 hover:from-primary-800 hover:to-primary-600 text-white font-semibold px-8 py-4 rounded-lg transition-all shadow-lg hover:shadow-glow-primary transform hover:scale-[1.02] group">
+                        <span class="flex items-center justify-center gap-2">
+                            Skicka meddelande
+                            <i data-lucide="send" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                        </span>
+                    </button>
+                    
+                    <!-- Response message -->
+                    <div id="form-response" class="mt-4"></div>
+                </form>
+            </div>
+            
+            <!-- Kontaktinfo + Portal + Snabbval -->
+            <div class="space-y-8 fade-in-scroll">
+                <!-- Kontaktinformation -->
+                <div class="bg-gradient-to-br from-primary-700 to-primary-500 text-white rounded-2xl p-8 shadow-xl relative overflow-hidden">
+                    <!-- Dekor -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16"></div>
+                    <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-12 -mb-12"></div>
+                    
+                    <div class="relative z-10">
+                        <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                            <i data-lucide="info" class="w-6 h-6"></i>
+                            Kontaktinformation
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            {% if page.address %}
+                            <div class="flex items-start gap-4 group">
+                                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="map-pin" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Adress</h4>
+                                    <p class="text-white/90 leading-relaxed">{{ page.address|linebreaks }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if page.phone %}
+                            <div class="flex items-start gap-4 group">
+                                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="phone" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Telefon</h4>
+                                    <a href="tel:{{ page.phone }}" class="text-white/90 hover:text-white transition underline">
+                                        {{ page.phone }}
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if page.email %}
+                            <div class="flex items-start gap-4 group">
+                                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="mail" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">E-post</h4>
+                                    <a href="mailto:{{ page.email }}" class="text-white/90 hover:text-white transition underline">
+                                        {{ page.email }}
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if page.opening_hours %}
+                            <div class="flex items-start gap-4 group">
+                                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="clock" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Öppettider</h4>
+                                    <div class="text-white/90">{{ page.opening_hours|richtext }}</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Kundportal CTA – nu dynamisk via NavigationSettings -->
+                <div class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 border-2 border-gray-200 hover:border-primary-300 transition-all shadow-lg hover:shadow-xl">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center shadow-md">
+                            <i data-lucide="log-in" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Redan kund?</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Logga in på vår kundportal för att hantera dina ärenden, ladda upp dokument och kommunicera med oss.
+                    </p>
+                    {% with portal_url=settings.core.NavigationSettings.portal_url|default:"https://harpans.konfident.io" %}
+                    <a href="{{ portal_url }}" 
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center w-full bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white font-semibold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-glow-accent transform hover:scale-[1.02] group">
+                        <span>Till kundportalen</span>
+                        <i data-lucide="external-link" class="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                    </a>
+                    {% endwith %}
+                </div>
+                
+                <!-- Snabbval: ring / maila -->
+                <div class="grid grid-cols-2 gap-4">
+                    {% if page.phone %}
+                    <a href="tel:{{ page.phone }}" 
+                       class="flex flex-col items-center gap-3 p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-primary-300 hover:shadow-lg transition-all group">
+                        <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="phone" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transition">Ring oss</span>
+                    </a>
+                    {% endif %}
+                    
+                    {% if page.email %}
+                    <a href="mailto:{{ page.email }}" 
+                       class="flex flex-col items-center gap-3 p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-accent-300 hover:shadow-lg transition-all group">
+                        <div class="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="mail" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-700 group-hover:text-accent-600 transition">Maila oss</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# “Vi svarar snabbt” – trygghetsrad #}
+<section class="py-16 bg-gradient-to-b from-white to-gray-50">
+    <div class="container mx-auto px-4 max-w-4xl text-center fade-in-scroll">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-primary-800">
+            Vi svarar snabbt!
+        </h2>
+        <p class="text-gray-600 text-lg mb-8">
+            Vi återkommer vanligtvis inom 24 timmar på vardagar. <br class="hidden md:block">
+            Akuta frågor? Ring oss direkt.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+            <div class="flex items-center gap-2 px-6 py-3 bg-primary-50 rounded-full">
+                <i data-lucide="clock" class="w-5 h-5 text-primary-600"></i>
+                <span class="text-sm font-semibold text-gray-700">Svar inom 24h</span>
+            </div>
+            <div class="flex items-center gap-2 px-6 py-3 bg-accent-50 rounded-full">
+                <i data-lucide="shield-check" class="w-5 h-5 text-accent-600"></i>
+                <span class="text-sm font-semibold text-gray-700">GDPR-säkert</span>
+            </div>
+            <div class="flex items-center gap-2 px-6 py-3 bg-white border border-accent-200 rounded-full">
+                <i data-lucide="zap" class="w-5 h-5 text-primary-700"></i>
+                <span class="text-sm font-semibold text-gray-700">Gratis konsultation</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    lucide.createIcons();
+    
+    // HTMX success handler - endast för huvudformuläret (form-response)
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        const targetEl = evt.detail.target;
+        if (!targetEl || targetEl.id !== 'form-response') {
+            return;
+        }
+
+        const responseDiv = document.getElementById('form-response');
+        if (!responseDiv) return;
+
+        if (evt.detail.successful) {
+            try {
+                const response = JSON.parse(evt.detail.xhr.response);
+                if (response.success) {
+                    responseDiv.innerHTML = 
+                        '<div class="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 text-green-800 px-6 py-4 rounded-xl shadow-lg animate-fade-in">' +
+                        '<div class="flex items-center gap-3">' +
+                        '<i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>' +
+                        '<p class="font-semibold">' + response.message + '</p>' +
+                        '</div>' +
+                        '</div>';
+                    evt.detail.target.closest('form').reset();
+                    lucide.createIcons();
+
+                    // Konfetti om biblioteket finns
+                    if (typeof window !== 'undefined' && window.confetti) {
+                        window.confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 }
+                        });
+                    }
+                }
+            } catch (e) {
+                // Om svaret inte är JSON – gör inget extra
+            }
+        } else {
+            responseDiv.innerHTML = 
+                '<div class="bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-300 text-red-800 px-6 py-4 rounded-xl shadow-lg animate-fade-in error-shake">' +
+                '<div class="flex items-center gap-3">' +
+                '<i data-lucide="alert-circle" class="w-6 h-6 text-red-600"></i>' +
+                '<p class="font-semibold">Ett fel uppstod. Försök igen.</p>' +
+                '</div>' +
+                '</div>';
+            lucide.createIcons();
+        }
+    });
+    
+    // Input focus-animation (utan Tailwind-klasser i JS)
+    document.querySelectorAll('.form-group input, .form-group textarea').forEach(input => {
+        input.addEventListener('focus', function() {
+            const group = this.closest('.form-group');
+            if (group) group.classList.add('form-group--focused');
+        });
+        input.addEventListener('blur', function() {
+            const group = this.closest('.form-group');
+            if (group) group.classList.remove('form-group--focused');
+        });
+    });
+
+    // Re-init icons efter HTMX swap (t.ex. callback-formuläret)
+    document.body.addEventListener('htmx:afterSwap', function() {
+        lucide.createIcons();
+    });
+</script>
+
+<style>
+    @keyframes animate-fade-in {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+        animation: animate-fade-in 0.3s ease-out;
+    }
+
+    @keyframes error-shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-4px); }
+        40%, 80% { transform: translateX(4px); }
+    }
+
+    .error-shake {
+        animation: error-shake 0.25s ease-in-out;
+    }
+    
+    .form-group {
+        transition: transform 0.2s ease;
+    }
+
+    .form-group--focused {
+        transform: scale(1.02);
+    }
+</style>
+
+{% endblock %}

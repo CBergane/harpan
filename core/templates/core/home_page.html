@@ -1,0 +1,452 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="relative py-24 md:py-32 overflow-hidden">
+    <!-- Bakgrundsbild -->
+    <div class="absolute inset-0">
+        <img 
+            src="{% static 'images/hero-office.jpg' %}" 
+            alt="Redovisning för moderna företag"
+            class="w-full h-full object-cover"
+        >
+    </div>
+
+    <!-- Färg-overlay i brandfärg -->
+    <div class="absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-900/80 to-primary-900/40"></div>
+
+    <!-- Svag “vignette” i toppen/botten (valfritt) -->
+    <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/20 to-transparent"></div>
+    <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/20 to-transparent"></div>
+
+    <!-- Innehåll -->
+    <div class="relative container mx-auto px-4">
+        <div class="max-w-3xl text-left md:text-left">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight">
+                {{ page.hero_title }}
+            </h1>
+
+            {% if page.hero_subtitle %}
+            <div class="text-lg md:text-2xl text-white/90 mb-8 leading-relaxed prose prose-invert">
+                {{ page.hero_subtitle|richtext }}
+            </div>
+            {% endif %}
+
+            <div class="flex flex-col sm:flex-row gap-4">
+                {% if settings.core.NavigationSettings.contact_page %}
+                <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
+                class="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-white text-primary-800 font-semibold shadow-lg hover:bg-gray-100 transition">
+                    {{ page.hero_cta_text }}
+                    <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                </a>
+                {% else %}
+                <a href="/kontakt/"
+                class="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-white text-primary-800 font-semibold shadow-lg hover:bg-gray-100 transition">
+                    {{ page.hero_cta_text }}
+                    <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                </a>
+                {% endif %}
+                {% if settings.core.NavigationSettings.services_page %}
+                <a href="{% pageurl settings.core.NavigationSettings.services_page %}"
+                class="inline-flex items-center gap-2 text-primary-600 font-semibold hover:gap-3 transition-all">
+                    Läs mer
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                {% else %}
+                <a href="/tjanster/"
+                class="inline-flex items-center gap-2 text-primary-600 font-semibold hover:gap-3 transition-all">
+                    Läs mer
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- “Trygghetsraden” -->
+            <div class="flex flex-wrap gap-4 mt-10 text-sm text-white/80">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    Auktoriserad byrå
+                </div>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    GDPR-säker
+                </div>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="clock" class="w-5 h-5"></i>
+                    Snabb support
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Om oss-sektion -->
+{% if page.about_text %}
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-primary-800 mb-6">
+                {{ page.about_title }}
+            </h2>
+            <div class="text-lg text-gray-700 leading-relaxed prose prose-lg mx-auto">
+                {{ page.about_text|richtext }}
+            </div>
+        </div>
+        
+        <!-- Värderingar/USPs -->
+        {% if page.value_1_title or page.value_2_title or page.value_3_title %}
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {% if page.value_1_title %}
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 text-center hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="{{ page.value_1_icon }}" class="w-10 h-10 text-white"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    {{ page.value_1_title }}
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    {{ page.value_1_text }}
+                </p>
+            </div>
+            {% endif %}
+            
+            {% if page.value_2_title %}
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 text-center hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="{{ page.value_2_icon }}" class="w-10 h-10 text-white"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    {{ page.value_2_title }}
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    {{ page.value_2_text }}
+                </p>
+            </div>
+            {% endif %}
+            
+            {% if page.value_3_title %}
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 text-center hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="{{ page.value_3_icon }}" class="w-10 h-10 text-white"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    {{ page.value_3_title }}
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    {{ page.value_3_text }}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Services Section -->
+<section id="tjanster" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Våra tjänster
+            </h2>
+            <p class="text-xl text-gray-600">
+                Allt du behöver för att få ordning på företagets ekonomi
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <!-- Service 1 -->
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-primary-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="calculator" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    Bokföring & Redovisning
+                </h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Låt oss sköta bokföringen så du kan fokusera på ditt företag.
+                </p>
+                <a href="/tjanster/" class="inline-flex items-center gap-2 text-primary-600 font-semibold hover:gap-3 transition-all">
+                    Läs mer
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+            
+            <!-- Service 2 -->
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-primary-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="trending-up" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    Ekonomisk rådgivning
+                </h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Vi hjälper dig ta smartare ekonomiska beslut.
+                </p>
+                <a href="/tjanster/" class="inline-flex items-center gap-2 text-primary-600 font-semibold hover:gap-3 transition-all">
+                    Läs mer
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+            
+            <!-- Service 3 -->
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-primary-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="file-text" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    Deklarationer & Skatt
+                </h3>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Korrekt och i tid, varje gång.
+                </p>
+                <a href="/tjanster/" class="inline-flex items-center gap-2 text-primary-600 font-semibold hover:gap-3 transition-all">
+                    Läs mer
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Team Member - STOR SEKTION -->
+{% if featured_member %}
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Din kontaktperson
+            </h2>
+            <p class="text-xl text-gray-600">
+                Boka ett kostnadsfritt möte direkt
+            </p>
+        </div>
+        
+        <div class="max-w-5xl mx-auto">
+            <div class="bg-white border-2 border-gray-200 rounded-3xl overflow-hidden hover:border-primary-600 hover:shadow-2xl transition-all">
+                <div class="grid md:grid-cols-2 gap-0">
+                    <!-- Photo - Stor -->
+                    <div class="aspect-square md:aspect-auto overflow-hidden relative bg-gray-100">
+                        {% if featured_member.photo %}
+                            {% image featured_member.photo fill-600x800 class="w-full h-full object-cover" %}
+                        {% else %}
+                            <div class="w-full h-full bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center">
+                                <i data-lucide="user" class="w-32 h-32 text-primary-300"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Status Badge -->
+                        {% if featured_member.availability_status != 'available' %}
+                        <div class="absolute top-6 right-6 z-10">
+                            <div class="flex items-center gap-2 px-4 py-2 rounded-full border {{ featured_member.get_status_badge_class }} text-sm font-semibold shadow-lg backdrop-blur-sm">
+                                <i data-lucide="{{ featured_member.get_status_icon }}" class="w-4 h-4"></i>
+                                <span>{{ featured_member.get_status_display_text }}</span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <!-- Tillgänglig badge -->
+                        <div class="absolute top-6 right-6 z-10">
+                            <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 border border-green-200 text-green-800 text-sm font-semibold shadow-lg backdrop-blur-sm">
+                                <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+                                <span>Tillgänglig nu</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Info - Stor -->
+                    <div class="p-8 md:p-12 flex flex-col justify-center">
+                        <div class="mb-6">
+                            <h3 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                                {{ featured_member.name }}
+                            </h3>
+                            <p class="text-xl text-primary-600 font-semibold">
+                                {{ featured_member.title }}
+                            </p>
+                        </div>
+                        
+                        <!-- Availability Note -->
+                        {% if featured_member.availability_note %}
+                        <div class="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                            <p class="text-sm text-gray-700 flex items-start gap-2">
+                                <i data-lucide="info" class="w-5 h-5 mt-0.5 flex-shrink-0 text-gray-500"></i>
+                                <span>{{ featured_member.availability_note }}</span>
+                            </p>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Bio -->
+                        {% if featured_member.bio %}
+                        <div class="text-gray-700 leading-relaxed mb-8 prose">
+                            {{ featured_member.bio|richtext }}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Primary CTA - Boka möte -->
+                        {% if featured_member.calendly_url and featured_member.availability_status != 'unavailable' %}
+                        <a href="{{ featured_member.calendly_url }}" 
+                           target="_blank"
+                           rel="noopener"
+                           class="btn-primary text-lg px-8 py-4 inline-flex items-center justify-center gap-2 mb-4 shadow-lg hover:shadow-xl w-full md:w-auto">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                            Boka möte med {{ featured_member.get_first_name }}
+                        </a>
+                        {% endif %}
+                        
+                        <!-- Contact Options -->
+                        <div class="flex flex-wrap gap-3 pt-6 border-t border-gray-200">
+                            {% if featured_member.email and featured_member.availability_status != 'unavailable' %}
+                            <a href="mailto:{{ featured_member.email }}" 
+                               class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-primary-600 hover:text-white transition-colors">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
+                                <span class="text-sm font-semibold">Email</span>
+                            </a>
+                            {% endif %}
+                            
+                            {% if featured_member.phone and featured_member.availability_status != 'unavailable' %}
+                            <a href="tel:{{ featured_member.phone }}" 
+                               class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-primary-600 hover:text-white transition-colors">
+                                <i data-lucide="phone" class="w-4 h-4"></i>
+                                <span class="text-sm font-semibold">Ring</span>
+                            </a>
+                            {% endif %}
+                            
+                            {% if featured_member.linkedin_url %}
+                            <a href="{{ featured_member.linkedin_url }}" 
+                               target="_blank"
+                               rel="noopener"
+                               class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-primary-600 hover:text-white transition-colors">
+                                <i data-lucide="linkedin" class="w-4 h-4"></i>
+                                <span class="text-sm font-semibold">LinkedIn</span>
+                            </a>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Link till hela teamet -->
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                        {% if settings.core.NavigationSettings.team_page %}
+                        <a href="{% pageurl settings.core.NavigationSettings.team_page %}"
+                        class="text-primary-600 font-semibold inline-flex items-center gap-2 hover:gap-3 transition-all">
+                            Se hela teamet
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                        {% else %}
+                        <a href="/mot-varat-team/"
+                        class="text-primary-600 font-semibold inline-flex items-center gap-2 hover:gap-3 transition-all">
+                            Se hela teamet
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Why Choose Us -->
+<section class="py-20 bg-background">
+    <div class="container mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Varför välja oss?
+            </h2>
+            <p class="text-xl text-gray-600">
+                Vi gör redovisning enkelt, transparent och tillgängligt
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-6 text-center hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-primary-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="zap" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Snabbt & Smidigt</h3>
+                <p class="text-sm text-gray-600">Digital hantering</p>
+            </div>
+            
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-6 text-center hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-primary-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="heart-handshake" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Personlig Service</h3>
+                <p class="text-sm text-gray-600">Din egen kontaktperson</p>
+            </div>
+            
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-6 text-center hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-primary-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="file-badge" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Transparent Prissättning</h3>
+                <p class="text-sm text-gray-600">Inga dolda avgifter</p>
+            </div>
+            
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-6 text-center hover:border-primary-600 hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-primary-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <i data-lucide="users-round" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Erfarna Experter</h3>
+                <p class="text-sm text-gray-600">Auktoriserade konsulter</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-primary">
+    <div class="container mx-auto px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                Redo att komma igång?
+            </h2>
+            <p class="text-xl text-white/90 mb-8">
+                Boka ett kostnadsfritt möte så berättar vi mer om hur vi kan hjälpa ditt företag.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                {# Kontakt-knapp – dynamisk #}
+                {% if settings.core.NavigationSettings.contact_page %}
+                <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
+                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 inline-flex items-center gap-2 text-lg px-8 py-4 shadow-lg">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    Kontakta oss
+                </a>
+                {% else %}
+                <a href="/kontakt/"
+                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 inline-flex items-center gap-2 text-lg px-8 py-4 shadow-lg">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    Kontakta oss
+                </a>
+                {% endif %}
+
+                {# Boka möte – företags-Calendly om satt #}
+                {% if settings.core.NavigationSettings.booking_url %}
+                <a href="{{ settings.core.NavigationSettings.booking_url }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn-secondary bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary-800 inline-flex items-center gap-2 text-lg px-8 py-4">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    Boka möte
+                </a>
+                {% else %}
+                <a href="/kontakt/"
+                   class="btn-secondary bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary-800 inline-flex items-center gap-2 text-lg px-8 py-4">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    Boka möte
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    lucide.createIcons();
+</script>
+
+{% endblock %}

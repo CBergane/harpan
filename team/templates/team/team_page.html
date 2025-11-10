@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags wagtailsettings_tags %}
+{% get_settings %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="py-16 md:py-24 bg-gradient-to-br from-background to-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 text-primary-800">
+                {{ page.title }}
+            </h1>
+            {% if page.intro %}
+            <div class="text-lg md:text-xl text-gray-700 leading-relaxed prose prose-lg mx-auto">
+                {{ page.intro|richtext }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Om oss-sektion (om content finns) -->
+{% if page.about_content %}
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-primary-800 mb-8 text-center">
+                {{ page.about_heading }}
+            </h2>
+            <div class="prose prose-lg mx-auto text-gray-700 leading-relaxed">
+                {{ page.about_content|richtext }}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Team Members Grid -->
+<section class="py-16 {% if page.about_content %}bg-background-light{% else %}bg-white{% endif %}">
+    <div class="container mx-auto px-4">
+        <!-- Section Header -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-primary-800 mb-4">
+                Vårt team
+            </h2>
+            <p class="text-lg text-gray-600">
+                Möt de experter som hjälper ditt företag växa
+            </p>
+        </div>
+        
+        {% if page.team_members.all %}
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for member in page.team_members.all %}
+            
+            <!-- Team Member Card med Status -->
+            <article class="team-card bg-white rounded-2xl overflow-hidden shadow-elegant group relative saturate-50 group-hover:saturate-100 transition-all duration-500">
+                <!-- Status Badge - Absolute positioned -->
+                {% if member.availability_status != 'available' %}
+                <div class="absolute top-4 right-4 z-10">
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border {{ member.get_status_badge_class }} text-xs font-semibold shadow-sm backdrop-blur-sm">
+                        <i data-lucide="{{ member.get_status_icon }}" class="w-3.5 h-3.5"></i>
+                        <span>{{ member.get_status_display_text }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Photo with Grayscale Hover Effect -->
+                <div class="aspect-[4/5] overflow-hidden relative bg-gray-100">
+                    {% if member.photo %}
+                        {% image member.photo fill-400x500 class="w-full h-full object-cover" %}
+                    {% else %}
+                        <div class="w-full h-full bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center">
+                            <i data-lucide="user" class="w-24 h-24 text-primary-300"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Gradient overlay på hover -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-primary-800/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    
+                    <!-- Availability overlay for unavailable members -->
+                    {% if member.availability_status == 'unavailable' or member.availability_status == 'vacation' %}
+                    <div class="absolute inset-0 bg-gray-900/10"></div>
+                    {% endif %}
+                </div>
+                
+                <!-- Member Info -->
+                <div class="p-6">
+                    <div class="mb-3">
+                        <!-- Name -->
+                        <h3 class="text-2xl font-bold text-primary-800 mb-1">
+                            {{ member.name }}
+                        </h3>
+                        
+                        <!-- Title/Role -->
+                        <p class="text-primary-600 font-semibold">
+                            {{ member.title }}
+                        </p>
+                    </div>
+                    
+                    <!-- Availability Note (om finns) -->
+                    {% if member.availability_note %}
+                    <div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-sm text-gray-700 flex items-start gap-2">
+                            <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500"></i>
+                            <span>{{ member.availability_note }}</span>
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                                        <!-- Bio -->
+                    {% if member.bio %}
+                    <div class="text-gray-700 text-sm leading-relaxed mb-4 prose-sm">
+                        {{ member.bio|richtext }}
+                    </div>
+                    {% endif %}
+
+                    {# Boka möte / Calendly-knapp om personen har länk och inte är helt otillgänglig #}
+                    {% if member.calendly_url and member.availability_status != 'unavailable' %}
+                    <div class="mb-4">
+                        <a href="{{ member.calendly_url }}"
+                           target="_blank"
+                           rel="noopener"
+                           class="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5
+                                  rounded-lg bg-primary-800 text-white text-sm font-semibold
+                                  shadow-md hover:bg-primary-700 hover:shadow-lg
+                                  transition-all duration-200">
+                            <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
+                            Boka möte med {{ member.get_first_name }}
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Contact Links -->
+                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
+
+                    <!-- Contact Links -->
+                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
+                        {% if member.email and member.availability_status != 'unavailable' %}
+                        <a 
+                            href="mailto:{{ member.email }}" 
+                            class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-primary-800 transition-colors {% if member.availability_status == 'vacation' %}opacity-50{% endif %}"
+                            title="Skicka email till {{ member.name }}"
+                        >
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">Email</span>
+                        </a>
+                        {% endif %}
+                        
+                        {% if member.phone and member.availability_status != 'unavailable' %}
+                        <a 
+                            href="tel:{{ member.phone }}" 
+                            class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-primary-800 transition-colors {% if member.availability_status == 'vacation' %}opacity-50{% endif %}"
+                            title="Ring {{ member.name }}"
+                        >
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">Ring</span>
+                        </a>
+                        {% endif %}
+                        
+                        {% if member.linkedin_url %}
+                        <a 
+                            href="{{ member.linkedin_url }}" 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-primary-800 transition-colors"
+                            title="Se {{ member.name }} på LinkedIn"
+                        >
+                            <i data-lucide="linkedin" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">LinkedIn</span>
+                        </a>
+                        {% endif %}
+                        
+                        <!-- Status indicator för tillgängliga -->
+                        {% if member.availability_status == 'available' %}
+                        <span class="inline-flex items-center gap-1.5 text-xs text-green-700 ml-auto">
+                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            Tillgänglig
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-16">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="users" class="w-10 h-10 text-gray-400"></i>
+            </div>
+            <p class="text-gray-500 text-lg">Inga teammedlemmar att visa ännu.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 bg-gradient-primary">
+    <div class="container mx-auto px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                Vill du träffa oss?
+            </h2>
+            <p class="text-xl text-white/90 mb-8">
+                Boka ett kostnadsfritt möte så kan vi diskutera hur vi kan hjälpa ditt företag.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                
+                {# Boka möte – använd booking_url om satt, annars kontakt-sidan, annars fallback #}
+                {% if settings.core.NavigationSettings.booking_url %}
+                <a href="{{ settings.core.NavigationSettings.booking_url }}"
+                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 inline-flex items-center gap-2 text-lg px-8 py-4">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    Boka möte
+                </a>
+                {% elif settings.core.NavigationSettings.contact_page %}
+                <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
+                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 inline-flex items-center gap-2 text-lg px-8 py-4">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    Boka möte
+                </a>
+                {% else %}
+                <a href="/kontakt/"
+                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 inline-flex items-center gap-2 text-lg px-8 py-4">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    Boka möte
+                </a>
+                {% endif %}
+
+                {# Kontakt – dynamisk #}
+                {% if settings.core.NavigationSettings.contact_page %}
+                <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
+                   class="btn-secondary bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary-800 inline-flex items-center gap-2 text-lg px-8 py-4">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    Kontakta oss
+                </a>
+                {% else %}
+                <a href="/kontakt/"
+                   class="btn-secondary bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary-800 inline-flex items-center gap-2 text-lg px-8 py-4">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    Kontakta oss
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    lucide.createIcons();
+</script>
+
+{% endblock %}
