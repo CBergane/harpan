@@ -4,15 +4,15 @@
 
 {% block content %}
 
-<!-- Hero Section -->
-<section class="py-16 md:py-24 bg-gradient-to-br from-background to-white">
+<!-- Hero Section - Fade in -->
+<section class="py-16 md:py-24 bg-gradient-to-br from-background to-white overflow-hidden">
     <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 text-primary-800">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 text-primary-800 opacity-0 animate-fade-in-up" style="animation-delay: 100ms">
                 {{ page.title }}
             </h1>
             {% if page.intro %}
-            <div class="text-lg md:text-xl text-gray-700 leading-relaxed prose prose-lg mx-auto">
+            <div class="text-lg md:text-xl text-gray-700 leading-relaxed prose prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay: 300ms">
                 {{ page.intro|richtext }}
             </div>
             {% endif %}
@@ -20,11 +20,11 @@
     </div>
 </section>
 
-<!-- Om oss-sektion (om content finns) -->
+<!-- Om oss-sektion -->
 {% if page.about_content %}
 <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto opacity-0" data-scroll>
             <h2 class="text-3xl md:text-4xl font-bold text-primary-800 mb-8 text-center">
                 {{ page.about_heading }}
             </h2>
@@ -36,11 +36,11 @@
 </section>
 {% endif %}
 
-<!-- Team Members Grid -->
+<!-- Team Members Grid - Stagger animation -->
 <section class="py-16 {% if page.about_content %}bg-background-light{% else %}bg-white{% endif %}">
     <div class="container mx-auto px-4">
         <!-- Section Header -->
-        <div class="text-center mb-12">
+        <div class="text-center mb-12 opacity-0" data-scroll>
             <h2 class="text-3xl md:text-4xl font-bold text-primary-800 mb-4">
                 Vårt team
             </h2>
@@ -53,22 +53,37 @@
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for member in page.team_members.all %}
             
-            <!-- Team Member Card med Status -->
-            <article class="team-card bg-white rounded-2xl overflow-hidden shadow-elegant group relative saturate-50 group-hover:saturate-100 transition-all duration-500">
-                <!-- Status Badge - Absolute positioned -->
+            <!-- Team Member Card - Scroll-triggered -->
+            <article class="team-card bg-white rounded-2xl overflow-hidden shadow-elegant group relative
+                            grayscale hover:grayscale-0 
+                            hover:shadow-2xl hover:-translate-y-2
+                            transition-all duration-500
+                            opacity-0"
+                     data-scroll
+                     style="animation-delay: {% cycle '0ms' '100ms' '200ms' '300ms' '400ms' '500ms' %}">
+                
+                <!-- Status Badge - Animated -->
                 {% if member.availability_status != 'available' %}
-                <div class="absolute top-4 right-4 z-10">
-                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border {{ member.get_status_badge_class }} text-xs font-semibold shadow-sm backdrop-blur-sm">
+                <div class="absolute top-4 right-4 z-10 opacity-0 animate-fade-in" style="animation-delay: 500ms">
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border {{ member.get_status_badge_class }} text-xs font-semibold shadow-lg backdrop-blur-sm">
                         <i data-lucide="{{ member.get_status_icon }}" class="w-3.5 h-3.5"></i>
                         <span>{{ member.get_status_display_text }}</span>
                     </div>
                 </div>
+                {% else %}
+                <!-- Tillgänglig badge med pulse -->
+                <div class="absolute top-4 right-4 z-10 opacity-0 animate-fade-in" style="animation-delay: 500ms">
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 border border-green-200 text-green-800 text-xs font-semibold shadow-lg backdrop-blur-sm">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <span>Tillgänglig</span>
+                    </div>
+                </div>
                 {% endif %}
                 
-                <!-- Photo with Grayscale Hover Effect -->
+                <!-- Photo with Grayscale Hover Effect + Zoom -->
                 <div class="aspect-[4/5] overflow-hidden relative bg-gray-100">
                     {% if member.photo %}
-                        {% image member.photo fill-400x500 class="w-full h-full object-cover" %}
+                        {% image member.photo fill-400x500 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" %}
                     {% else %}
                         <div class="w-full h-full bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center">
                             <i data-lucide="user" class="w-24 h-24 text-primary-300"></i>
@@ -76,9 +91,9 @@
                     {% endif %}
                     
                     <!-- Gradient overlay på hover -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-primary-800/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-primary-800/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     
-                    <!-- Availability overlay for unavailable members -->
+                    <!-- Availability overlay för unavailable -->
                     {% if member.availability_status == 'unavailable' or member.availability_status == 'vacation' %}
                     <div class="absolute inset-0 bg-gray-900/10"></div>
                     {% endif %}
@@ -88,7 +103,7 @@
                 <div class="p-6">
                     <div class="mb-3">
                         <!-- Name -->
-                        <h3 class="text-2xl font-bold text-primary-800 mb-1">
+                        <h3 class="text-2xl font-bold text-primary-800 mb-1 group-hover:text-primary-600 transition-colors">
                             {{ member.name }}
                         </h3>
                         
@@ -98,7 +113,7 @@
                         </p>
                     </div>
                     
-                    <!-- Availability Note (om finns) -->
+                    <!-- Availability Note -->
                     {% if member.availability_note %}
                     <div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <p class="text-sm text-gray-700 flex items-start gap-2">
@@ -108,14 +123,14 @@
                     </div>
                     {% endif %}
                     
-                                        <!-- Bio -->
+                    <!-- Bio -->
                     {% if member.bio %}
                     <div class="text-gray-700 text-sm leading-relaxed mb-4 prose-sm">
                         {{ member.bio|richtext }}
                     </div>
                     {% endif %}
 
-                    {# Boka möte / Calendly-knapp om personen har länk och inte är helt otillgänglig #}
+                    <!-- Boka möte / Calendly-knapp -->
                     {% if member.calendly_url and member.availability_status != 'unavailable' %}
                     <div class="mb-4">
                         <a href="{{ member.calendly_url }}"
@@ -123,23 +138,22 @@
                            rel="noopener"
                            class="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5
                                   rounded-lg bg-primary-800 text-white text-sm font-semibold
-                                  shadow-md hover:bg-primary-700 hover:shadow-lg
-                                  transition-all duration-200">
+                                  shadow-md hover:bg-primary-700 hover:shadow-lg hover:scale-105
+                                  transition-all duration-300">
                             <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
                             Boka möte med {{ member.get_first_name }}
                         </a>
                     </div>
                     {% endif %}
                     
-                    <!-- Contact Links -->
-                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
-
-                    <!-- Contact Links -->
+                    <!-- Contact Links - Animated hover -->
                     <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
                         {% if member.email and member.availability_status != 'unavailable' %}
                         <a 
                             href="mailto:{{ member.email }}" 
-                            class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-primary-800 transition-colors {% if member.availability_status == 'vacation' %}opacity-50{% endif %}"
+                            class="inline-flex items-center gap-2 text-sm px-3 py-2 rounded-lg bg-gray-100 text-gray-600 
+                                   hover:bg-primary-600 hover:text-white hover:scale-105
+                                   transition-all duration-300 {% if member.availability_status == 'vacation' %}opacity-50{% endif %}"
                             title="Skicka email till {{ member.name }}"
                         >
                             <i data-lucide="mail" class="w-4 h-4"></i>
@@ -150,7 +164,9 @@
                         {% if member.phone and member.availability_status != 'unavailable' %}
                         <a 
                             href="tel:{{ member.phone }}" 
-                            class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-primary-800 transition-colors {% if member.availability_status == 'vacation' %}opacity-50{% endif %}"
+                            class="inline-flex items-center gap-2 text-sm px-3 py-2 rounded-lg bg-gray-100 text-gray-600 
+                                   hover:bg-primary-600 hover:text-white hover:scale-105
+                                   transition-all duration-300 {% if member.availability_status == 'vacation' %}opacity-50{% endif %}"
                             title="Ring {{ member.name }}"
                         >
                             <i data-lucide="phone" class="w-4 h-4"></i>
@@ -163,20 +179,14 @@
                             href="{{ member.linkedin_url }}" 
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-primary-800 transition-colors"
+                            class="inline-flex items-center gap-2 text-sm px-3 py-2 rounded-lg bg-gray-100 text-gray-600 
+                                   hover:bg-primary-600 hover:text-white hover:scale-105
+                                   transition-all duration-300"
                             title="Se {{ member.name }} på LinkedIn"
                         >
                             <i data-lucide="linkedin" class="w-4 h-4"></i>
                             <span class="hidden sm:inline">LinkedIn</span>
                         </a>
-                        {% endif %}
-                        
-                        <!-- Status indicator för tillgängliga -->
-                        {% if member.availability_status == 'available' %}
-                        <span class="inline-flex items-center gap-1.5 text-xs text-green-700 ml-auto">
-                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                            Tillgänglig
-                        </span>
                         {% endif %}
                     </div>
                 </div>
@@ -186,8 +196,8 @@
         </div>
         {% else %}
         <!-- Empty State -->
-        <div class="text-center py-16">
-            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div class="text-center py-16 opacity-0 animate-fade-in">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-slow">
                 <i data-lucide="users" class="w-10 h-10 text-gray-400"></i>
             </div>
             <p class="text-gray-500 text-lg">Inga teammedlemmar att visa ännu.</p>
@@ -196,10 +206,15 @@
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="py-16 bg-gradient-primary">
-    <div class="container mx-auto px-4 text-center">
-        <div class="max-w-3xl mx-auto">
+<!-- CTA Section - Scale animation -->
+<section class="py-16 bg-gradient-primary relative overflow-hidden">
+    <!-- Animated background pattern -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 text-center relative">
+        <div class="max-w-3xl mx-auto opacity-0" data-scroll>
             <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
                 Vill du träffa oss?
             </h2>
@@ -208,37 +223,37 @@
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 
-                {# Boka möte – använd booking_url om satt, annars kontakt-sidan, annars fallback #}
+                <!-- Boka möte -->
                 {% if settings.core.NavigationSettings.booking_url %}
                 <a href="{{ settings.core.NavigationSettings.booking_url }}"
-                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 inline-flex items-center gap-2 text-lg px-8 py-4">
+                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 hover:scale-105 inline-flex items-center gap-2 text-lg px-8 py-4 transition-all duration-300">
                     <i data-lucide="calendar" class="w-5 h-5"></i>
                     Boka möte
                 </a>
                 {% elif settings.core.NavigationSettings.contact_page %}
                 <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
-                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 inline-flex items-center gap-2 text-lg px-8 py-4">
+                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 hover:scale-105 inline-flex items-center gap-2 text-lg px-8 py-4 transition-all duration-300">
                     <i data-lucide="calendar" class="w-5 h-5"></i>
                     Boka möte
                 </a>
                 {% else %}
                 <a href="/kontakt/"
-                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 inline-flex items-center gap-2 text-lg px-8 py-4">
+                   class="btn-primary bg-white text-primary-800 hover:bg-white/90 hover:scale-105 inline-flex items-center gap-2 text-lg px-8 py-4 transition-all duration-300">
                     <i data-lucide="calendar" class="w-5 h-5"></i>
                     Boka möte
                 </a>
                 {% endif %}
 
-                {# Kontakt – dynamisk #}
+                <!-- Kontakt -->
                 {% if settings.core.NavigationSettings.contact_page %}
                 <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
-                   class="btn-secondary bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary-800 inline-flex items-center gap-2 text-lg px-8 py-4">
+                   class="btn-secondary bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary-800 hover:scale-105 inline-flex items-center gap-2 text-lg px-8 py-4 transition-all duration-300">
                     <i data-lucide="mail" class="w-5 h-5"></i>
                     Kontakta oss
                 </a>
                 {% else %}
                 <a href="/kontakt/"
-                   class="btn-secondary bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary-800 inline-flex items-center gap-2 text-lg px-8 py-4">
+                   class="btn-secondary bg-white/10 text-white border-2 border-white hover:bg-white hover:text-primary-800 hover:scale-105 inline-flex items-center gap-2 text-lg px-8 py-4 transition-all duration-300">
                     <i data-lucide="mail" class="w-5 h-5"></i>
                     Kontakta oss
                 </a>
@@ -248,9 +263,76 @@
     </div>
 </section>
 
+<style>
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-bounce-slow {
+    animation: bounce 2s infinite;
+}
+
+/* Team card animations */
+.team-card {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* Scroll-triggered animations */
+[data-scroll] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+[data-scroll].visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
 
 <script>
-    lucide.createIcons();
+// Initialize Lucide icons
+lucide.createIcons();
+
+// Scroll-triggered animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+// Observe all elements with data-scroll
+document.querySelectorAll('[data-scroll]').forEach(el => {
+    observer.observe(el);
+});
 </script>
 
 {% endblock %}

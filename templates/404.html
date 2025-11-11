@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+{% load static wagtailsettings_tags %}
+{% get_settings %}
+
+{% block content %}
+
+<!-- Fun 404 Page with Animations -->
+<section class="min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-background via-white to-background py-16 overflow-hidden relative">
+    <!-- Floating shapes in background -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="floating-shape absolute top-20 left-10 w-20 h-20 bg-primary-100 rounded-full opacity-30"></div>
+        <div class="floating-shape absolute top-40 right-20 w-32 h-32 bg-accent-100 rounded-full opacity-20" style="animation-delay: 1s"></div>
+        <div class="floating-shape absolute bottom-20 left-1/4 w-24 h-24 bg-primary-100 rounded-full opacity-25" style="animation-delay: 2s"></div>
+        <div class="floating-shape absolute bottom-40 right-1/3 w-16 h-16 bg-accent-100 rounded-full opacity-30" style="animation-delay: 1.5s"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-3xl mx-auto text-center">
+            <!-- Animated 404 number -->
+            <div class="mb-8">
+                <div class="relative inline-block">
+                    <!-- Main 404 -->
+                    <h1 class="text-[150px] md:text-[200px] font-bold text-primary-800 leading-none opacity-0 animate-scale-bounce">
+                        404
+                    </h1>
+                    
+                    <!-- Floating icons around 404 -->
+                    <div class="absolute -top-8 -left-8 animate-float" style="animation-delay: 0.5s">
+                        <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center shadow-lg">
+                            <i data-lucide="search" class="w-6 h-6 text-primary-600"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute -top-4 -right-4 animate-float" style="animation-delay: 1s">
+                        <div class="w-10 h-10 bg-accent-100 rounded-full flex items-center justify-center shadow-lg">
+                            <i data-lucide="help-circle" class="w-5 h-5 text-accent-600"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 animate-float" style="animation-delay: 1.5s">
+                        <div class="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center shadow-lg">
+                            <i data-lucide="map" class="w-7 h-7 text-primary-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Heading -->
+            <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4 opacity-0 animate-fade-in-up" style="animation-delay: 300ms">
+                Oops! Sidan hittades inte
+            </h2>
+            
+            <!-- Description -->
+            <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed opacity-0 animate-fade-in-up" style="animation-delay: 500ms">
+                Sidan du letar efter verkar ha tagit semester 🏖️<br class="hidden md:block">
+                Men oroa dig inte – vi hjälper dig hitta rätt!
+            </p>
+            
+            <!-- Search box (optional - you can enable later) -->
+            <div class="max-w-md mx-auto mb-8 opacity-0 animate-fade-in-up" style="animation-delay: 700ms">
+                <div class="relative">
+                    <input 
+                        type="search" 
+                        placeholder="Sök på webbplatsen..." 
+                        class="w-full px-6 py-4 pr-12 border-2 border-gray-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none"
+                        id="404-search"
+                    >
+                    <button class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center hover:bg-primary-700 hover:scale-110 transition-all">
+                        <i data-lucide="search" class="w-5 h-5 text-white"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Quick links -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 opacity-0 animate-fade-in-up" style="animation-delay: 900ms">
+                <a href="/" 
+                   class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary-800 text-white font-semibold rounded-xl hover:bg-primary-700 hover:scale-105 hover:shadow-glow-primary transition-all">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span>Till startsidan</span>
+                </a>
+                
+                {% if settings.core.NavigationSettings.contact_page %}
+                <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
+                   class="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-primary-800 text-primary-800 font-semibold rounded-xl hover:bg-primary-800 hover:text-white hover:scale-105 transition-all">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    <span>Kontakta oss</span>
+                </a>
+                {% else %}
+                <a href="/kontakt/"
+                   class="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-primary-800 text-primary-800 font-semibold rounded-xl hover:bg-primary-800 hover:text-white hover:scale-105 transition-all">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    <span>Kontakta oss</span>
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Popular pages -->
+            <div class="opacity-0 animate-fade-in-up" style="animation-delay: 1100ms">
+                <p class="text-gray-600 font-semibold mb-4">Populära sidor:</p>
+                <div class="flex flex-wrap gap-3 justify-center">
+                    {% if settings.core.NavigationSettings.services_page %}
+                    <a href="{% pageurl settings.core.NavigationSettings.services_page %}"
+                       class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary-600 hover:shadow-lg hover:-translate-y-1 transition-all group">
+                        <i data-lucide="briefcase" class="w-4 h-4 text-gray-600 group-hover:text-primary-600 transition-colors"></i>
+                        <span class="text-sm text-gray-700 group-hover:text-primary-600 transition-colors">Tjänster</span>
+                    </a>
+                    {% endif %}
+                    
+                    {% if settings.core.NavigationSettings.team_page %}
+                    <a href="{% pageurl settings.core.NavigationSettings.team_page %}"
+                       class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary-600 hover:shadow-lg hover:-translate-y-1 transition-all group">
+                        <i data-lucide="users" class="w-4 h-4 text-gray-600 group-hover:text-primary-600 transition-colors"></i>
+                        <span class="text-sm text-gray-700 group-hover:text-primary-600 transition-colors">Vårt team</span>
+                    </a>
+                    {% endif %}
+                    
+                    {% if settings.core.NavigationSettings.blog_page %}
+                    <a href="{% pageurl settings.core.NavigationSettings.blog_page %}"
+                       class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary-600 hover:shadow-lg hover:-translate-y-1 transition-all group">
+                        <i data-lucide="newspaper" class="w-4 h-4 text-gray-600 group-hover:text-primary-600 transition-colors"></i>
+                        <span class="text-sm text-gray-700 group-hover:text-primary-600 transition-colors">Blogg</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Fun fact section -->
+<section class="py-16 bg-gradient-to-r from-primary-50 via-white to-accent-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto text-center opacity-0" data-scroll>
+            <div class="inline-flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center animate-bounce-slow">
+                    <i data-lucide="lightbulb" class="w-6 h-6 text-primary-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900">Visste du att...</h3>
+            </div>
+            
+            <p class="text-gray-700 text-lg leading-relaxed mb-6">
+                404-felet fick sitt namn från rum 404 på CERN där World Wide Web uppfanns. 
+                Rummet innehöll den första webbservern, och när filer inte hittades där fick man felmeddelandet "404"! 🚀
+            </p>
+            
+            <p class="text-sm text-gray-500">
+                (Okej, det är egentligen en myt, men det är en rolig historia ändå! 😄)
+            </p>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Animations */
+@keyframes scaleBounce {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes floatingShape {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+        transform: translate(30px, -30px) rotate(120deg);
+    }
+    66% {
+        transform: translate(-20px, 20px) rotate(240deg);
+    }
+}
+
+.animate-scale-bounce {
+    animation: scaleBounce 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+    animation: bounce 2s infinite;
+}
+
+.floating-shape {
+    animation: floatingShape 15s ease-in-out infinite;
+}
+
+/* Scroll-triggered */
+[data-scroll] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+[data-scroll].visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
+
+<script>
+// Initialize Lucide icons
+lucide.createIcons();
+
+// Scroll-triggered animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('[data-scroll]').forEach(el => {
+    observer.observe(el);
+});
+
+// Optional: Simple search functionality (you can enhance this)
+const searchInput = document.getElementById('404-search');
+if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            if (query) {
+                // Redirect to your search page or Google site search
+                window.location.href = '/?s=' + encodeURIComponent(query);
+                // Or use Google: window.location.href = 'https://www.google.com/search?q=site:yoursite.com ' + query;
+            }
+        }
+    });
+}
+</script>
+
+{% endblock %}

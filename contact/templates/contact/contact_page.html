@@ -2,17 +2,18 @@
 {% load wagtailcore_tags static wagtailsettings_tags %}
 {% get_settings %}
 
+
 {% block content %}
 
-{# HERO – enkel, brandad, konsekvent med övriga sidor #}
-<section class="py-16 md:py-20 bg-background border-b border-primary-100">
+{# HERO – Fade in #}
+<section class="py-16 md:py-20 bg-background border-b border-primary-100 overflow-hidden">
     <div class="container mx-auto px-4">
-        <div class="max-w-3xl mx-auto text-center fade-in-scroll">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-primary-800">
+        <div class="max-w-3xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-primary-800 opacity-0 animate-fade-in-up" style="animation-delay: 100ms">
                 {{ page.title }}
             </h1>
             {% if page.intro %}
-            <div class="text-lg md:text-xl text-gray-700 leading-relaxed prose prose-lg mx-auto">
+            <div class="text-lg md:text-xl text-gray-700 leading-relaxed prose prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay: 300ms">
                 {{ page.intro|richtext }}
             </div>
             {% endif %}
@@ -20,12 +21,12 @@
     </div>
 </section>
 
-{# CALLBACK-SEKTION – tydlig CTA med gradientband + vit card #}
+{# CALLBACK-SEKTION – Scale-in animation #}
 <section class="py-16 bg-gradient-primary">
     <div class="container mx-auto px-4">
-        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8 md:p-12 opacity-0 animate-scale-in" style="animation-delay: 400ms">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-slow">
                     <i data-lucide="phone-call" class="w-8 h-8 text-primary-800"></i>
                 </div>
                 <h2 class="text-3xl font-bold text-primary-800 mb-3">
@@ -45,7 +46,7 @@
                 {% csrf_token %}
                 
                 <!-- Namn -->
-                <div>
+                <div class="form-group">
                     <label for="callback-name" class="form-label">
                         <i data-lucide="user" class="w-4 h-4 inline mr-1"></i>
                         Namn *
@@ -55,13 +56,13 @@
                         id="callback-name"
                         name="name"
                         required
-                        class="form-input"
+                        class="form-input transform transition-all duration-300 focus:scale-105"
                         placeholder="Ditt fullständiga namn"
                     >
                 </div>
                 
                 <!-- Telefon -->
-                <div>
+                <div class="form-group">
                     <label for="callback-phone" class="form-label">
                         <i data-lucide="phone" class="w-4 h-4 inline mr-1"></i>
                         Telefonnummer *
@@ -71,14 +72,14 @@
                         id="callback-phone"
                         name="phone"
                         required
-                        class="form-input"
+                        class="form-input transform transition-all duration-300 focus:scale-105"
                         placeholder="070-123 45 67"
                         pattern="[0-9\s\-\+]+"
                     >
                 </div>
                 
                 <!-- Email (optional) -->
-                <div>
+                <div class="form-group">
                     <label for="callback-email" class="form-label">
                         <i data-lucide="mail" class="w-4 h-4 inline mr-1"></i>
                         E-post (valfritt)
@@ -87,13 +88,13 @@
                         type="email" 
                         id="callback-email"
                         name="email"
-                        class="form-input"
+                        class="form-input transform transition-all duration-300 focus:scale-105"
                         placeholder="din@email.se"
                     >
                 </div>
                 
-                <!-- Bästa tid att ringa -->
-                <div>
+                <!-- Bästa tid -->
+                <div class="form-group">
                     <label for="callback-time" class="form-label">
                         <i data-lucide="clock" class="w-4 h-4 inline mr-1"></i>
                         Bästa tid att ringa
@@ -101,7 +102,7 @@
                     <select 
                         id="callback-time"
                         name="preferred_time"
-                        class="form-input"
+                        class="form-input transform transition-all duration-300 focus:scale-105"
                     >
                         <option value="">Välj tid...</option>
                         <option value="morning">Förmiddag (08:00-12:00)</option>
@@ -111,7 +112,7 @@
                 </div>
                 
                 <!-- Meddelande -->
-                <div>
+                <div class="form-group">
                     <label for="callback-message" class="form-label">
                         <i data-lucide="message-square" class="w-4 h-4 inline mr-1"></i>
                         Vad gäller det? (valfritt)
@@ -120,7 +121,7 @@
                         id="callback-message"
                         name="message"
                         rows="4"
-                        class="form-input resize-none"
+                        class="form-input resize-none transform transition-all duration-300 focus:scale-105"
                         placeholder="Berätta kort vad du behöver hjälp med..."
                     ></textarea>
                 </div>
@@ -129,7 +130,7 @@
                 <div>
                     <button 
                         type="submit"
-                        class="btn-primary w-full text-lg py-4 flex items-center justify-center gap-2"
+                        class="btn-primary w-full text-lg py-4 flex items-center justify-center gap-2 hover:scale-105 transition-transform duration-300"
                     >
                         <i data-lucide="phone-outgoing" class="w-5 h-5"></i>
                         Skicka förfrågan
@@ -155,13 +156,13 @@
     </div>
 </section>
 
-{# KONTAKT + INFO – två kolumner, vita kort på vit bg #}
+{# KONTAKT + INFO – Scroll-triggered #}
 <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
         <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             
-            <!-- Kontaktformulär -->
-            <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all fade-in-scroll">
+            <!-- Kontaktformulär - Slide från vänster -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all opacity-0" data-scroll>
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl flex items-center justify-center shadow-md">
                         <i data-lucide="send" class="w-6 h-6 text-white"></i>
@@ -187,7 +188,7 @@
                         <input type="text" 
                                name="name" 
                                required
-                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none transform focus:scale-105"
                                placeholder="Ditt namn">
                     </div>
                     
@@ -202,7 +203,7 @@
                         <input type="email" 
                                name="email" 
                                required
-                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-accent-600 focus:ring-4 focus:ring-accent-100 transition-all outline-none"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-accent-600 focus:ring-4 focus:ring-accent-100 transition-all outline-none transform focus:scale-105"
                                placeholder="din@email.se">
                     </div>
                     
@@ -216,7 +217,7 @@
                         </label>
                         <input type="tel" 
                                name="phone"
-                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-accent-600 focus:ring-4 focus:ring-accent-100 transition-all outline-none"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-accent-600 focus:ring-4 focus:ring-accent-100 transition-all outline-none transform focus:scale-105"
                                placeholder="070-123 45 67">
                     </div>
                     
@@ -230,7 +231,7 @@
                         </label>
                         <input type="text" 
                                name="subject"
-                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none transform focus:scale-105"
                                placeholder="Vad gäller din förfrågan?">
                     </div>
                     
@@ -245,7 +246,7 @@
                         <textarea name="message" 
                                   rows="5" 
                                   required
-                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none resize-none"
+                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none resize-none transform focus:scale-105"
                                   placeholder="Berätta mer om hur vi kan hjälpa dig..."></textarea>
                     </div>
                     
@@ -275,10 +276,10 @@
                 </form>
             </div>
             
-            <!-- Kontaktinfo + Portal + Snabbval -->
-            <div class="space-y-8 fade-in-scroll">
+            <!-- Kontaktinfo + Portal - Slide från höger -->
+            <div class="space-y-8 opacity-0" data-scroll style="animation-delay: 200ms">
                 <!-- Kontaktinformation -->
-                <div class="bg-gradient-to-br from-primary-700 to-primary-500 text-white rounded-2xl p-8 shadow-xl relative overflow-hidden">
+                <div class="bg-gradient-to-br from-primary-700 to-primary-500 text-white rounded-2xl p-8 shadow-xl relative overflow-hidden transform transition-all duration-500 hover:scale-105">
                     <!-- Dekor -->
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16"></div>
                     <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-12 -mb-12"></div>
@@ -345,8 +346,8 @@
                     </div>
                 </div>
                 
-                <!-- Kundportal CTA – nu dynamisk via NavigationSettings -->
-                <div class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 border-2 border-gray-200 hover:border-primary-300 transition-all shadow-lg hover:shadow-xl">
+                <!-- Kundportal CTA -->
+                <div class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 border-2 border-gray-200 hover:border-primary-300 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center shadow-md">
                             <i data-lucide="log-in" class="w-6 h-6 text-white"></i>
@@ -371,7 +372,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     {% if page.phone %}
                     <a href="tel:{{ page.phone }}" 
-                       class="flex flex-col items-center gap-3 p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-primary-300 hover:shadow-lg transition-all group">
+                       class="flex flex-col items-center gap-3 p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-primary-300 hover:shadow-lg hover:-translate-y-1 transition-all group">
                         <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                             <i data-lucide="phone" class="w-6 h-6 text-white"></i>
                         </div>
@@ -381,7 +382,7 @@
                     
                     {% if page.email %}
                     <a href="mailto:{{ page.email }}" 
-                       class="flex flex-col items-center gap-3 p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-accent-300 hover:shadow-lg transition-all group">
+                       class="flex flex-col items-center gap-3 p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-accent-300 hover:shadow-lg hover:-translate-y-1 transition-all group">
                         <div class="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                             <i data-lucide="mail" class="w-6 h-6 text-white"></i>
                         </div>
@@ -394,9 +395,9 @@
     </div>
 </section>
 
-{# “Vi svarar snabbt” – trygghetsrad #}
+{# Trust badges - Stagger #}
 <section class="py-16 bg-gradient-to-b from-white to-gray-50">
-    <div class="container mx-auto px-4 max-w-4xl text-center fade-in-scroll">
+    <div class="container mx-auto px-4 max-w-4xl text-center opacity-0" data-scroll>
         <h2 class="text-3xl md:text-4xl font-bold mb-4 text-primary-800">
             Vi svarar snabbt!
         </h2>
@@ -405,15 +406,15 @@
             Akuta frågor? Ring oss direkt.
         </p>
         <div class="flex flex-wrap justify-center gap-4">
-            <div class="flex items-center gap-2 px-6 py-3 bg-primary-50 rounded-full">
+            <div class="flex items-center gap-2 px-6 py-3 bg-primary-50 rounded-full transform hover:scale-110 transition-transform duration-300">
                 <i data-lucide="clock" class="w-5 h-5 text-primary-600"></i>
                 <span class="text-sm font-semibold text-gray-700">Svar inom 24h</span>
             </div>
-            <div class="flex items-center gap-2 px-6 py-3 bg-accent-50 rounded-full">
+            <div class="flex items-center gap-2 px-6 py-3 bg-accent-50 rounded-full transform hover:scale-110 transition-transform duration-300">
                 <i data-lucide="shield-check" class="w-5 h-5 text-accent-600"></i>
                 <span class="text-sm font-semibold text-gray-700">GDPR-säkert</span>
             </div>
-            <div class="flex items-center gap-2 px-6 py-3 bg-white border border-accent-200 rounded-full">
+            <div class="flex items-center gap-2 px-6 py-3 bg-white border border-accent-200 rounded-full transform hover:scale-110 transition-transform duration-300">
                 <i data-lucide="zap" class="w-5 h-5 text-primary-700"></i>
                 <span class="text-sm font-semibold text-gray-700">Gratis konsultation</span>
             </div>
@@ -421,10 +422,134 @@
     </div>
 </section>
 
+<!-- Confetti container -->
+<div id="confetti-container" class="confetti-container"></div>
+
+<style>
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-bounce-slow {
+    animation: bounce 2s infinite;
+}
+
+/* Scroll-triggered */
+[data-scroll] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+[data-scroll].visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Form animations */
+@keyframes fadeInAnim {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+    
+.animate-fade-in {
+    animation: fadeInAnim 0.3s ease-out;
+}
+
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+
+.error-shake {
+    animation: errorShake 0.25s ease-in-out;
+}
+</style>
+
 <script>
     lucide.createIcons();
     
-    // HTMX success handler - endast för huvudformuläret (form-response)
+    // Scroll-triggered animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('[data-scroll]').forEach(el => {
+        observer.observe(el);
+    });
+    
+    // ✨ CONFETTI FUNCTION ✨
+    function createConfetti() {
+        const container = document.getElementById('confetti-container');
+        if (!container) return;
+        
+        const colors = ['#4a0416', '#c2185b', '#7c2d41', '#f8bbd0', '#ffd54f', '#81c784'];
+        const confettiCount = 100;
+        
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 0.5 + 's';
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            
+            container.appendChild(confetti);
+            
+            // Remove after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, 3500);
+        }
+    }
+    
+    // HTMX success handler WITH CONFETTI!
     document.body.addEventListener('htmx:afterRequest', function(evt) {
         const targetEl = evt.detail.target;
         if (!targetEl || targetEl.id !== 'form-response') {
@@ -448,18 +573,10 @@
                     evt.detail.target.closest('form').reset();
                     lucide.createIcons();
 
-                    // Konfetti om biblioteket finns
-                    if (typeof window !== 'undefined' && window.confetti) {
-                        window.confetti({
-                            particleCount: 100,
-                            spread: 70,
-                            origin: { y: 0.6 }
-                        });
-                    }
+                    // 🎉 TRIGGER CONFETTI! 🎉
+                    createConfetti();
                 }
-            } catch (e) {
-                // Om svaret inte är JSON – gör inget extra
-            }
+            } catch (e) {}
         } else {
             responseDiv.innerHTML = 
                 '<div class="bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-300 text-red-800 px-6 py-4 rounded-xl shadow-lg animate-fade-in error-shake">' +
@@ -471,52 +588,11 @@
             lucide.createIcons();
         }
     });
-    
-    // Input focus-animation (utan Tailwind-klasser i JS)
-    document.querySelectorAll('.form-group input, .form-group textarea').forEach(input => {
-        input.addEventListener('focus', function() {
-            const group = this.closest('.form-group');
-            if (group) group.classList.add('form-group--focused');
-        });
-        input.addEventListener('blur', function() {
-            const group = this.closest('.form-group');
-            if (group) group.classList.remove('form-group--focused');
-        });
-    });
 
-    // Re-init icons efter HTMX swap (t.ex. callback-formuläret)
+    // Re-init icons
     document.body.addEventListener('htmx:afterSwap', function() {
         lucide.createIcons();
     });
 </script>
-
-<style>
-    @keyframes animate-fade-in {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .animate-fade-in {
-        animation: animate-fade-in 0.3s ease-out;
-    }
-
-    @keyframes error-shake {
-        0%, 100% { transform: translateX(0); }
-        20%, 60% { transform: translateX(-4px); }
-        40%, 80% { transform: translateX(4px); }
-    }
-
-    .error-shake {
-        animation: error-shake 0.25s ease-in-out;
-    }
-    
-    .form-group {
-        transition: transform 0.2s ease;
-    }
-
-    .form-group--focused {
-        transform: scale(1.02);
-    }
-</style>
 
 {% endblock %}

@@ -1,13 +1,79 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
 
-<!-- Hero Header – renare, utan shapes -->
-<section class="py-16 md:py-20 bg-white border-b border-gray-100">
-    <div class="container mx-auto px-4 max-w-4xl">
+<!-- Reading progress indicator -->
+<div class="fixed top-20 left-0 right-0 h-1 bg-gray-100 z-40">
+    <div id="reading-progress" class="h-full bg-primary-700 transition-all duration-150" style="width: 0%"></div>
+</div>
+
+<!-- Hero Header – Fade in + Optional Parallax -->
+<section class="relative py-16 md:py-20 overflow-hidden">
+    {% if page.hero_image %}
+    <!-- Parallax background -->
+    <div class="absolute inset-0 parallax-bg">
+        {% image page.hero_image fill-1920x1080 class="w-full h-full object-cover transform scale-110" %}
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-900/80 to-primary-900/40"></div>
+    
+    <!-- Vignette -->
+    <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/20 to-transparent"></div>
+    <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/20 to-transparent"></div>
+    
+    <div class="relative container mx-auto px-4 max-w-4xl">
         <!-- Breadcrumb -->
-        <div class="mb-6">
+        <div class="mb-6 opacity-0 animate-fade-in" style="animation-delay: 100ms">
+            <a href="/blogg/" 
+               class="inline-flex items-center gap-2 text-white/80 hover:text-white transition-all group">
+                <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
+                <span class="underline decoration-white/40 group-hover:decoration-white decoration-2">
+                    Tillbaka till bloggen
+                </span>
+            </a>
+        </div>
+        
+        <!-- Titel -->
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white opacity-0 animate-fade-in-up" style="animation-delay: 200ms">
+            {{ page.title }}
+        </h1>
+        
+        <!-- Meta info -->
+        <div class="flex flex-wrap items-center gap-4 md:gap-6 mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 400ms">
+            <div class="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full transform hover:scale-105 transition-transform">
+                <i data-lucide="calendar" class="w-5 h-5 text-white"></i>
+                <time datetime="{{ page.date|date:'Y-m-d' }}" class="text-white font-medium">
+                    {{ page.date|date:"j F Y" }}
+                </time>
+            </div>
+            {% if page.author_name %}
+            <div class="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full transform hover:scale-105 transition-transform">
+                <i data-lucide="user" class="w-5 h-5 text-white"></i>
+                <span class="text-white font-medium">{{ page.author_name }}</span>
+            </div>
+            {% endif %}
+            <div class="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full transform hover:scale-105 transition-transform">
+                <i data-lucide="clock" class="w-5 h-5 text-white"></i>
+                <span class="text-white font-medium">
+                    {{ page.reading_time }} minut{% if page.reading_time != 1 %}er{% endif %} läsning
+                </span>
+            </div>
+        </div>
+        
+        <!-- Intro -->
+        <div class="pl-4 border-l-4 border-white opacity-0 animate-fade-in-up" style="animation-delay: 600ms">
+            <p class="text-xl text-white font-medium leading-relaxed">
+                {{ page.intro }}
+            </p>
+        </div>
+    </div>
+    {% else %}
+    <!-- No image - simple background -->
+    <div class="absolute inset-0 bg-white border-b border-gray-100"></div>
+    
+    <div class="relative container mx-auto px-4 max-w-4xl">
+        <!-- Breadcrumb -->
+        <div class="mb-6 opacity-0 animate-fade-in" style="animation-delay: 100ms">
             <a href="/blogg/" 
                class="inline-flex items-center gap-2 text-gray-600 hover:text-primary-700 transition-all group">
                 <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
@@ -18,25 +84,25 @@
         </div>
         
         <!-- Titel -->
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-primary-800">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-primary-800 opacity-0 animate-fade-in-up" style="animation-delay: 200ms">
             {{ page.title }}
         </h1>
         
         <!-- Meta info -->
-        <div class="flex flex-wrap items-center gap-4 md:gap-6 mb-6">
-            <div class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
+        <div class="flex flex-wrap items-center gap-4 md:gap-6 mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 400ms">
+            <div class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full transform hover:scale-105 transition-transform">
                 <i data-lucide="calendar" class="w-5 h-5 text-primary-700"></i>
                 <time datetime="{{ page.date|date:'Y-m-d' }}" class="text-gray-800 font-medium">
                     {{ page.date|date:"j F Y" }}
                 </time>
             </div>
             {% if page.author_name %}
-            <div class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
+            <div class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full transform hover:scale-105 transition-transform">
                 <i data-lucide="user" class="w-5 h-5 text-primary-700"></i>
                 <span class="text-gray-800 font-medium">{{ page.author_name }}</span>
             </div>
             {% endif %}
-            <div class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
+            <div class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full transform hover:scale-105 transition-transform">
                 <i data-lucide="clock" class="w-5 h-5 text-primary-700"></i>
                 <span class="text-gray-800 font-medium">
                     {{ page.reading_time }} minut{% if page.reading_time != 1 %}er{% endif %} läsning
@@ -44,24 +110,25 @@
             </div>
         </div>
         
-        <!-- Intro med enkel accent -->
-        <div class="pl-4 border-l-4 border-primary-700">
+        <!-- Intro -->
+        <div class="pl-4 border-l-4 border-primary-700 opacity-0 animate-fade-in-up" style="animation-delay: 600ms">
             <p class="text-xl text-gray-700 font-medium leading-relaxed">
                 {{ page.intro }}
             </p>
         </div>
     </div>
+    {% endif %}
 </section>
 
 <!-- Content Area -->
 <article class="py-12 md:py-16 bg-background">
     <div class="container mx-auto px-4 max-w-4xl">
-        <!-- Content med samma logik, renare styling -->
+        <!-- Content med scroll-triggered animations -->
         <div class="prose prose-lg max-w-none blog-content">
             {% for block in page.body %}
                 {% if block.block_type == 'heading' %}
-                    <!-- Heading med enklare accent -->
-                    <div class="mt-16 mb-8">
+                    <!-- Heading -->
+                    <div class="mt-16 mb-8 opacity-0" data-scroll>
                         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
                             {{ block.value }}
                         </h2>
@@ -70,22 +137,22 @@
                     
                 {% elif block.block_type == 'paragraph' %}
                     <!-- Paragraph -->
-                    <div class="mb-6 text-gray-700 leading-relaxed fade-in-scroll">
+                    <div class="mb-6 text-gray-700 leading-relaxed opacity-0" data-scroll>
                         {{ block.value|richtext }}
                     </div>
                     
                 {% elif block.block_type == 'image' %}
                     <!-- Image -->
-                    <figure class="my-12 fade-in-scroll">
-                        <div class="relative overflow-hidden rounded-2xl shadow-elegant">
+                    <figure class="my-12 opacity-0" data-scroll>
+                        <div class="relative overflow-hidden rounded-2xl shadow-elegant transform transition-transform duration-500 hover:scale-105">
                             {% image block.value original class="w-full h-auto" %}
                         </div>
                     </figure>
                     
                 {% elif block.block_type == 'quote' %}
                     <!-- Quote -->
-                    <div class="my-12 fade-in-scroll">
-                        <blockquote class="relative bg-white border-l-4 border-primary-700 rounded-r-2xl p-6 shadow-elegant">
+                    <div class="my-12 opacity-0" data-scroll>
+                        <blockquote class="relative bg-white border-l-4 border-primary-700 rounded-r-2xl p-6 shadow-elegant transform transition-transform duration-500 hover:scale-105">
                             <div class="flex items-start gap-4">
                                 <i data-lucide="quote" class="w-7 h-7 text-primary-700 flex-shrink-0 mt-1"></i>
                                 <p class="text-xl md:text-2xl italic text-gray-800 leading-relaxed m-0">
@@ -98,33 +165,27 @@
             {% endfor %}
         </div>
         
-        <!-- Reading progress indicator -->
-        <div class="fixed top-20 left-0 right-0 h-1 bg-gray-100 z-40">
-            <div id="reading-progress" class="h-full bg-primary-700 transition-all duration-150" style="width: 0%"></div>
-        </div>
-        
         <!-- Share buttons -->
-        <div class="mt-16 pt-8 border-t border-gray-200 fade-in-scroll">
+        <div class="mt-16 pt-8 border-t border-gray-200 opacity-0" data-scroll>
             <p class="text-gray-600 mb-4 font-semibold">Dela artikel:</p>
             <div class="flex flex-wrap gap-3 items-center">
                 <!-- Kopiera länk -->
                 <button
                     type="button"
                     id="share-copy"
-                    class="w-10 h-10 bg-primary-700 text-white rounded-lg hover:shadow-glow-primary hover:-translate-y-0.5 transition-all flex items-center justify-center"
+                    class="w-10 h-10 bg-primary-700 text-white rounded-lg hover:shadow-glow-primary hover:-translate-y-1 hover:scale-110 transition-all flex items-center justify-center"
                     title="Kopiera länk"
                 >
                     <i data-lucide="link-2" class="w-5 h-5"></i>
                 </button>
 
-                <!-- X (tidigare Twitter) -->
+                <!-- X -->
                 <button
                     type="button"
                     id="share-x"
-                    class="w-10 h-10 bg-gray-900 text-white rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center"
+                    class="w-10 h-10 bg-gray-900 text-white rounded-lg hover:shadow-lg hover:-translate-y-1 hover:scale-110 transition-all flex items-center justify-center"
                     title="Dela på X"
                 >
-                    <!-- Enkel X-logga som följer textfärg -->
                     <svg viewBox="0 0 24 24" class="w-5 h-5" aria-hidden="true">
                         <path
                             fill="currentColor"
@@ -137,7 +198,7 @@
                 <button
                     type="button"
                     id="share-linkedin"
-                    class="w-10 h-10 bg-[#0A66C2] text-white rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center"
+                    class="w-10 h-10 bg-[#0A66C2] text-white rounded-lg hover:shadow-lg hover:-translate-y-1 hover:scale-110 transition-all flex items-center justify-center"
                     title="Dela på LinkedIn"
                 >
                     <i data-lucide="linkedin" class="w-5 h-5"></i>
@@ -147,16 +208,16 @@
                 <button
                     type="button"
                     id="share-facebook"
-                    class="w-10 h-10 bg-[#1877F2] text-white rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center"
+                    class="w-10 h-10 bg-[#1877F2] text-white rounded-lg hover:shadow-lg hover:-translate-y-1 hover:scale-110 transition-all flex items-center justify-center"
                     title="Dela på Facebook"
                 >
                     <i data-lucide="facebook" class="w-5 h-5"></i>
                 </button>
 
-                <!-- Feedback-text när man kopierar -->
+                <!-- Feedback -->
                 <span
                     id="share-feedback"
-                    class="ml-2 text-sm text-gray-500 opacity-0 transition-opacity"
+                    class="ml-2 text-sm text-green-600 font-semibold opacity-0 transition-opacity"
                 >
                     Länk kopierad! ✅
                 </span>
@@ -169,14 +230,16 @@
 <section class="py-16 bg-white">
     <div class="container mx-auto px-4 max-w-4xl">
         <!-- Back button -->
-        <a href="/blogg/" 
-           class="inline-flex items-center gap-3 px-8 py-3 bg-white border-2 border-primary-700 text-primary-800 font-semibold rounded-xl hover:bg-primary-700 hover:text-white hover:-translate-y-0.5 transition-all">
-            <i data-lucide="arrow-left" class="w-5 h-5"></i>
-            <span>Tillbaka till bloggen</span>
-        </a>
+        <div class="opacity-0" data-scroll>
+            <a href="/blogg/" 
+               class="inline-flex items-center gap-3 px-8 py-3 bg-white border-2 border-primary-700 text-primary-800 font-semibold rounded-xl hover:bg-primary-700 hover:text-white hover:-translate-y-1 hover:scale-105 transition-all">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                <span>Tillbaka till bloggen</span>
+            </a>
+        </div>
         
-        <!-- Newsletter CTA – emailfält + knapp (backend kan du koppla sen) -->
-        <div class="mt-12 p-8 md:p-10 bg-background rounded-2xl border border-primary-100 shadow-elegant overflow-hidden">
+        <!-- Newsletter CTA -->
+        <div class="mt-12 p-8 md:p-10 bg-background rounded-2xl border border-primary-100 shadow-elegant overflow-hidden opacity-0" data-scroll style="animation-delay: 200ms">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-8">
                 <!-- Ikon + text -->
                 <div class="flex items-start gap-4 lg:max-w-xl">
@@ -193,8 +256,7 @@
                     </div>
                 </div>
 
-                <!-- Nyhetsbrevsformulär – koppla till backend senare -->
-                <!-- TODO: sätt t.ex. /nyhetsbrev/ när backends byggs -->
+                <!-- Newsletter form -->
                 <form 
                     method="post" 
                     action=""
@@ -206,11 +268,11 @@
                         name="email"
                         required
                         placeholder="din@email.se"
-                        class="form-input w-full sm:w-72 lg:w-72"
+                        class="form-input w-full sm:w-72 lg:w-72 transform transition-all focus:scale-105"
                     >
                     <button
                         type="submit"
-                        class="inline-flex items-center justify-center px-6 py-3 bg-primary-800 text-white font-semibold rounded-lg hover:bg-primary-700 hover:-translate-y-0.5 transition-all whitespace-nowrap"
+                        class="inline-flex items-center justify-center px-6 py-3 bg-primary-800 text-white font-semibold rounded-lg hover:bg-primary-700 hover:-translate-y-1 hover:scale-105 transition-all whitespace-nowrap"
                     >
                         <span>Prenumerera</span>
                         <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
@@ -225,137 +287,208 @@
     </div>
 </section>
 
-<script>
-    lucide.createIcons();
-    
-    // Reading progress bar (samma logik som tidigare)
-    window.addEventListener('scroll', function() {
-        const article = document.querySelector('article');
-        if (!article) return;
-        
-        const articleHeight = article.offsetHeight;
-        const articleTop = article.offsetTop;
-        const scrollPosition = window.scrollY;
-        const windowHeight = window.innerHeight;
-        
-        const progress = ((scrollPosition - articleTop + windowHeight) / articleHeight) * 100;
-        const clampedProgress = Math.min(Math.max(progress, 0), 100);
-        
-        document.getElementById('reading-progress').style.width = clampedProgress + '%';
-    });
-
-    // SHARE-LOGIK
-    (function() {
-        const shareUrl = window.location.href;
-        const shareText = document.title; // t.ex. "Titel - Harpans Redovisning"
-
-        const feedbackEl = document.getElementById('share-feedback');
-
-        function showFeedback() {
-            if (!feedbackEl) return;
-            feedbackEl.classList.remove('opacity-0');
-            feedbackEl.classList.add('opacity-100');
-            setTimeout(() => {
-                feedbackEl.classList.add('opacity-0');
-                feedbackEl.classList.remove('opacity-100');
-            }, 2000);
-        }
-
-        // Kopiera länk
-        const copyBtn = document.getElementById('share-copy');
-        if (copyBtn) {
-            copyBtn.addEventListener('click', async () => {
-                try {
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        await navigator.clipboard.writeText(shareUrl);
-                    } else {
-                        // fallback
-                        const tempInput = document.createElement('input');
-                        tempInput.value = shareUrl;
-                        document.body.appendChild(tempInput);
-                        tempInput.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(tempInput);
-                    }
-                    showFeedback();
-                } catch (e) {
-                    console.error('Kunde inte kopiera länk', e);
-                }
-            });
-        }
-
-        function openShare(url) {
-            window.open(url, '_blank', 'noopener,noreferrer,width=600,height=600');
-        }
-
-        // X (Twitter-intent används fortfarande för delning)
-        const xBtn = document.getElementById('share-x');
-        if (xBtn) {
-            xBtn.addEventListener('click', () => {
-                const url = 'https://twitter.com/intent/tweet?url=' 
-                    + encodeURIComponent(shareUrl) 
-                    + '&text=' 
-                    + encodeURIComponent(shareText);
-                openShare(url);
-            });
-        }
-
-        // LinkedIn
-        const liBtn = document.getElementById('share-linkedin');
-        if (liBtn) {
-            liBtn.addEventListener('click', () => {
-                const url = 'https://www.linkedin.com/sharing/share-offsite/?url=' 
-                    + encodeURIComponent(shareUrl);
-                openShare(url);
-            });
-        }
-
-        // Facebook
-        const fbBtn = document.getElementById('share-facebook');
-        if (fbBtn) {
-            fbBtn.addEventListener('click', () => {
-                const url = 'https://www.facebook.com/sharer/sharer.php?u=' 
-                    + encodeURIComponent(shareUrl);
-                openShare(url);
-            });
-        }
-    })();
-</script>
-
 <style>
-    /* Blog-specific styles – ren, läsbar typografi */
-    .blog-content p {
-        margin-bottom: 1.5rem;
-        line-height: 1.8;
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-    .blog-content a {
-        color: #4a0416; /* primary-800 */
-        text-decoration: underline;
-        text-decoration-thickness: 2px;
-        text-underline-offset: 2px;
-        transition: color 0.2s ease;
-    }
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
-    .blog-content a:hover {
-        color: #3d0312; /* primary-900 */
-    }
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
 
-    .blog-content strong {
-        color: #111827; /* gray-900 */
-        font-weight: 700;
-    }
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
 
-    .blog-content ul,
-    .blog-content ol {
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
+/* Scroll-triggered */
+[data-scroll] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
 
-    .blog-content li {
-        color: #374151; /* gray-700 */
-        line-height: 1.7;
-    }
+[data-scroll].visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Parallax */
+.parallax-bg {
+    will-change: transform;
+}
+
+/* Blog-specific styles */
+.blog-content p {
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+}
+
+.blog-content a {
+    color: #4a0416;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
+}
+
+.blog-content a:hover {
+    color: #3d0312;
+}
+
+.blog-content strong {
+    color: #111827;
+    font-weight: 700;
+}
+
+.blog-content ul,
+.blog-content ol {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.blog-content li {
+    color: #374151;
+    line-height: 1.7;
+}
 </style>
+
+<script>
+// Initialize Lucide icons
+lucide.createIcons();
+
+// Parallax effect on hero (if exists)
+const parallaxBg = document.querySelector('.parallax-bg');
+if (parallaxBg) {
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const parallaxImg = parallaxBg.querySelector('img');
+        if (parallaxImg) {
+            parallaxImg.style.transform = `translateY(${scrolled * 0.5}px) scale(1.1)`;
+        }
+    });
+}
+
+// Scroll-triggered animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('[data-scroll]').forEach(el => {
+    observer.observe(el);
+});
+
+// Reading progress bar
+window.addEventListener('scroll', function() {
+    const article = document.querySelector('article');
+    if (!article) return;
+    
+    const articleHeight = article.offsetHeight;
+    const articleTop = article.offsetTop;
+    const scrollPosition = window.scrollY;
+    const windowHeight = window.innerHeight;
+    
+    const progress = ((scrollPosition - articleTop + windowHeight) / articleHeight) * 100;
+    const clampedProgress = Math.min(Math.max(progress, 0), 100);
+    
+    document.getElementById('reading-progress').style.width = clampedProgress + '%';
+});
+
+// Share functionality
+(function() {
+    const shareUrl = window.location.href;
+    const shareText = document.title;
+    const feedbackEl = document.getElementById('share-feedback');
+
+    function showFeedback() {
+        if (!feedbackEl) return;
+        feedbackEl.classList.remove('opacity-0');
+        feedbackEl.classList.add('opacity-100');
+        setTimeout(() => {
+            feedbackEl.classList.add('opacity-0');
+            feedbackEl.classList.remove('opacity-100');
+        }, 2000);
+    }
+
+    // Copy link
+    const copyBtn = document.getElementById('share-copy');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(shareUrl);
+                } else {
+                    const tempInput = document.createElement('input');
+                    tempInput.value = shareUrl;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+                }
+                showFeedback();
+            } catch (e) {
+                console.error('Kunde inte kopiera länk', e);
+            }
+        });
+    }
+
+    function openShare(url) {
+        window.open(url, '_blank', 'noopener,noreferrer,width=600,height=600');
+    }
+
+    // X
+    const xBtn = document.getElementById('share-x');
+    if (xBtn) {
+        xBtn.addEventListener('click', () => {
+            const url = 'https://twitter.com/intent/tweet?url=' 
+                + encodeURIComponent(shareUrl) 
+                + '&text=' 
+                + encodeURIComponent(shareText);
+            openShare(url);
+        });
+    }
+
+    // LinkedIn
+    const liBtn = document.getElementById('share-linkedin');
+    if (liBtn) {
+        liBtn.addEventListener('click', () => {
+            const url = 'https://www.linkedin.com/sharing/share-offsite/?url=' 
+                + encodeURIComponent(shareUrl);
+            openShare(url);
+        });
+    }
+
+    // Facebook
+    const fbBtn = document.getElementById('share-facebook');
+    if (fbBtn) {
+        fbBtn.addEventListener('click', () => {
+            const url = 'https://www.facebook.com/sharer/sharer.php?u=' 
+                + encodeURIComponent(shareUrl);
+            openShare(url);
+        });
+    }
+})();
+</script>
 
 {% endblock %}
