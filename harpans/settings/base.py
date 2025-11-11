@@ -11,15 +11,15 @@ BASE_DIR = PROJECT_DIR.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-this')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS',
-                       default='127.0.0.1,localhost,[::1],0.0.0.0',
-                       cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,[::1],0.0.0.0,172.234.102.252', 
+	cast=Csv(),
+	)
 
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:8000", "http://localhost:8000", "http://0.0.0.0:8000"
+    "http://127.0.0.1:8000", "http://localhost:8000", "http://0.0.0.0:8000", "http://172.234.102.252/"
 ]
 
 # Application definition
