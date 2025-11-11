@@ -403,7 +403,20 @@ class ServicesPage(BasePage):
     
     class Meta:
         verbose_name = "Tjänstesida"
+        
+# =============================================================================
+# LEGAL PAGE (integritetspolicy, villkor osv)
+# =============================================================================
+class LegalPage(BasePage):
+    body = RichTextField(
+        blank=True,
+        verbose_name="Innehåll"
+    )
 
-# =============================================================================
-# SOCIAL MEDIA
-# =============================================================================
+    content_panels = Page.content_panels + [
+        FieldPanel("body"),
+    ]
+
+    class Meta:
+        verbose_name = "Juridisk sida"
+        verbose_name_plural = "Juridiska sidor"

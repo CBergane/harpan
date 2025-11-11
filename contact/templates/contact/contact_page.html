@@ -143,7 +143,12 @@
                 <p class="text-xs text-gray-500 text-center">
                     Genom att skicka formuläret godkänner du att vi kontaktar dig.
                     Vi hanterar dina uppgifter enligt 
-                    <a href="/integritetspolicy/" class="text-primary-800 underline">vår integritetspolicy</a>.
+                    <a href="{% slugurl 'integritetspolicy' %}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-primary-800 underline">
+                        vår integritetspolicy
+                    </a>
                 </p>
             </form>
         </div>
