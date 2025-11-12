@@ -6,8 +6,9 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.search import index
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images import get_image_model
 from core.models import BasePage
-
+from django.db import models
 
 class BlogIndexPage(BasePage):
     hero_image = models.ForeignKey(
@@ -17,9 +18,8 @@ class BlogIndexPage(BasePage):
         related_name='+',
         verbose_name='Hero-bild'
     )
-    intro = RichTextField(blank=True, verbose_name="Introduktion")
-
-    content_panels = BasePage.content_panels + [
+    intro = RichTextField(blank=True)
+    content_panels = Page.content_panels + [
         FieldPanel('hero_image'),
         FieldPanel('intro'),
     ]
@@ -35,7 +35,7 @@ class BlogIndexPage(BasePage):
     class Meta:
         verbose_name = "Blogg"
 
-        
+
 class BlogPost(BasePage):
     """Blogginlägg"""
     
