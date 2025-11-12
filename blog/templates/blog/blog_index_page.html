@@ -3,43 +3,46 @@
 
 {% block content %}
 
-{# HERO – Fade in + Parallax (om hero_image finns) #}
-<section class="relative py-16 md:py-20 overflow-hidden">
+{# HERO – Taller + Parallax #}
+<section id="blog-hero" class="relative isolate overflow-hidden">
   {% if page.hero_image %}
-    <!-- Parallax background -->
-    <div class="absolute inset-0 parallax-bg">
-      {% image page.hero_image fill-1600x900 class="w-full h-96 md:h-[28rem] object-cover" %}
+    <!-- BG layer with fixed viewport height -->
+    <div aria-hidden="true" class="absolute inset-0">
+      <div class="parallax-bg h-[60vh] min-h-[22rem] max-h-[80vh]">
+        {% image page.hero_image fill-1920x1080 class="w-full h-full object-cover" loading="eager" decoding="async" %}
+      </div>
+      <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-900/80 to-primary-900/40"></div>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/20 to-transparent"></div>
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/20 to-transparent"></div>
     </div>
-    <div class="absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-900/80 to-primary-900/40"></div>
 
-    <!-- Vignette -->
-    <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/20 to-transparent"></div>
-    <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/20 to-transparent"></div>
-
+    <!-- Foreground copy -->
     <div class="relative container mx-auto px-4">
-      <div class="max-w-3xl mx-auto text-center">
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 opacity-0 animate-fade-in-up" style="animation-delay: 100ms">
-          {{ page.title }}
-        </h1>
-        {% if page.intro %}
-          <div class="text-lg md:text-xl text-white/90 leading-relaxed prose prose-invert prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay: 300ms">
+      <div class="min-h-[40vh] py-12 md:py-20 flex items-end justify-center text-center">
+        <div class="max-w-3xl">
+          <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 opacity-0 animate-fade-in-up" style="animation-delay:100ms">
+            {{ page.title }}
+          </h1>
+          {% if page.intro %}
+          <div class="text-lg md:text-xl text-white/90 leading-relaxed prose prose-invert prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay:300ms">
             {{ page.intro|richtext }}
           </div>
-        {% endif %}
+          {% endif %}
+        </div>
       </div>
     </div>
   {% else %}
-    <!-- No image - simple background -->
+    <!-- Fallback utan bild -->
     <div class="absolute inset-0 bg-white border-b border-gray-100"></div>
     <div class="relative container mx-auto px-4">
-      <div class="max-w-3xl mx-auto text-center">
-        <h1 class="text-4xl md:text-5xl font-bold text-primary-800 mb-4 opacity-0 animate-fade-in-up" style="animation-delay: 100ms">
+      <div class="max-w-3xl mx-auto text-center py-16 md:py-20">
+        <h1 class="text-4xl md:text-5xl font-bold text-primary-800 mb-4 opacity-0 animate-fade-in-up" style="animation-delay:100ms">
           {{ page.title }}
         </h1>
         {% if page.intro %}
-          <div class="text-lg md:text-xl text-gray-600 leading-relaxed prose prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay: 300ms">
-            {{ page.intro|richtext }}
-          </div>
+        <div class="text-lg md:text-xl text-gray-600 leading-relaxed prose prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay:300ms">
+          {{ page.intro|richtext }}
+        </div>
         {% endif %}
       </div>
     </div>
@@ -119,18 +122,45 @@
 </style>
 
 <script>
-lucide.createIcons();
-// Parallax
-const parallaxBg=document.querySelector('.parallax-bg');
-if(parallaxBg){
-  window.addEventListener('scroll',()=>{
-    const img=parallaxBg.querySelector('img');
-    if(img){ img.style.transform=`translateY(${window.pageYOffset*0.5}px) scale(1.1)`; }
-  });
-}
-// Scroll-trigger
-const obs=new IntersectionObserver((entries)=>entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); }}),{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
-document.querySelectorAll('[data-scroll]').forEach(el=>obs.observe(el));
+  lucide.createIcons();
+
+  // Parallax relative to hero (smoother & stronger)
+  const hero = document.getElementById('blog-hero');
+  const layer = hero?.querySelector('.parallax-bg img');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function onScroll() {
+    if (!hero || !layer || prefersReduced) return;
+
+    const rect = hero.getBoundingClientRect();
+    // progress: 0 at top entering viewport, 1 when fully scrolled past
+    const progress = Math.min(1, Math.max(0, (0 - rect.top) / Math.max(1, rect.height)));
+    const translate = progress * 80; // tweak: larger value = stronger parallax
+
+    layer.style.willChange = 'transform';
+    layer.style.transform = `translateY(${translate}px) scale(1.08)`;
+  }
+
+  // rAF for smoothness
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        onScroll();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+  onScroll();
+
+  // Scroll-triggered reveals (unchanged)
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('[data-scroll]').forEach(el => obs.observe(el));
 </script>
+
 
 {% endblock %}
