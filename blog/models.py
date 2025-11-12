@@ -10,26 +10,32 @@ from core.models import BasePage
 
 
 class BlogIndexPage(BasePage):
-    """Bloggens indexsida"""
-    
+    hero_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name='Hero-bild'
+    )
     intro = RichTextField(blank=True, verbose_name="Introduktion")
-    
+
     content_panels = BasePage.content_panels + [
+        FieldPanel('hero_image'),
         FieldPanel('intro'),
     ]
-    
+
     def get_posts(self):
         return BlogPost.objects.live().descendant_of(self).order_by('-date')
-    
+
     def get_context(self, request):
-        context = super().get_context(request)
-        context['posts'] = self.get_posts()
-        return context
-    
+        ctx = super().get_context(request)
+        ctx['posts'] = self.get_posts()
+        return ctx
+
     class Meta:
         verbose_name = "Blogg"
 
-
+        
 class BlogPost(BasePage):
     """Blogginlägg"""
     
