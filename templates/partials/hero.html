@@ -9,7 +9,8 @@
       <div class="parallax-bg absolute inset-0 will-change-[transform] transform-gpu">
         {% image page.hero_image width-2560
            alt=page.hero_image.title
-           class="w-full h-full object-cover object-center" loading="eager" decoding="async" sizes="100vw" %}
+           class="w-full h-full object-cover object-center"
+           loading="eager" decoding="async" sizes="100vw" %}
       </div>
 
       <!-- Brand gradient -->
@@ -19,7 +20,7 @@
       <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/20 to-transparent"></div>
       <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent"></div>
 
-      <!-- Subtle moving sheen (very light) -->
+      <!-- Subtle moving sheen -->
       <div class="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen animate-hero-sheen"></div>
     </div>
   {% endif %}
@@ -44,22 +45,16 @@
 </section>
 
 <style>
-/* Keyframes kept minimal & local to hero */
-@keyframes fadeInUp {
-  from { opacity:0; transform: translateY(22px); }
-  to   { opacity:1; transform: translateY(0); }
-}
+@keyframes fadeInUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
 .animate-fade-in-up { animation: fadeInUp .7s ease-out forwards; }
 
-/* ultra-subtle highlight that drifts across */
 @keyframes heroSheen {
-  0%   { background: radial-gradient(1200px 600px at -20% 30%, rgba(255,255,255,.8), transparent 60%); }
-  50%  { background: radial-gradient(1200px 600px at 120% 60%, rgba(255,255,255,.8), transparent 60%); }
-  100% { background: radial-gradient(1200px 600px at -20% 30%, rgba(255,255,255,.8), transparent 60%); }
+  0%{background:radial-gradient(1200px 600px at -20% 30%, rgba(255,255,255,.8), transparent 60%)}
+  50%{background:radial-gradient(1200px 600px at 120% 60%, rgba(255,255,255,.8), transparent 60%)}
+  100%{background:radial-gradient(1200px 600px at -20% 30%, rgba(255,255,255,.8), transparent 60%)}
 }
 .animate-hero-sheen { animation: heroSheen 18s linear infinite; }
 
-/* prefers-reduced-motion: respect user setting */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in-up { animation: none; opacity:1; transform:none; }
   .animate-hero-sheen { display:none; }
@@ -67,7 +62,6 @@
 </style>
 
 <script>
-/* Parallax (gentle, GPU-friendly, respects reduced motion) */
 (function () {
   const root = document.getElementById('{{ hero_id|default:"page-hero" }}');
   if (!root) return;
@@ -77,7 +71,6 @@
 
   function onScroll() {
     const r = root.getBoundingClientRect();
-    // progress 0..1 over hero height
     const progress = Math.min(1, Math.max(0, (0 - r.top) / Math.max(1, r.height)));
     img.style.transform = `translateY(${progress * 80}px) scale(1.08)`;
     img.style.willChange = 'transform';
