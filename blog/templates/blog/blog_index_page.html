@@ -3,22 +3,23 @@
 
 {% block content %}
 
-{# HERO – Full-height + Parallax #}
+{# HERO – Half viewport + Parallax #}
 <section id="blog-hero"
-  class="relative isolate overflow-hidden min-h-[80vh] md:min-h-[90vh] lg:min-h-screen h-[85svh] md:h-[92svh]">
+  class="relative isolate overflow-hidden min-h-[50vh] h-[50svh] md:min-h-[55vh] md:h-[55svh]">
   {% if page.hero_image %}
     <div aria-hidden="true" class="absolute inset-0">
-      <div class="parallax-bg absolute inset-0 h-full pointer-events-none">
-        {% image page.hero_image width-2560 class="w-full h-full object-cover object-center will-change-[transform] transform-gpu" loading="eager" decoding="async" sizes="100vw" %}
+      <div class="parallax-bg absolute inset-0 h-full pointer-events-none will-change-[transform] transform-gpu">
+        {# Use width- to avoid server-side cropping; center the interesting area #}
+        {% image page.hero_image width-2560 class="w-full h-full object-cover object-center lg:object-[50%_40%]" loading="eager" decoding="async" sizes="100vw" %}
       </div>
       <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-900/80 to-primary-900/40"></div>
-      <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/20 to-transparent"></div>
-      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/20 to-transparent"></div>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/20 to-transparent"></div>
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent"></div>
     </div>
 
     <div class="relative h-full">
       <div class="container mx-auto px-4 h-full">
-        <div class="h-full flex items-end justify-center text-center pb-12 md:pb-20">
+        <div class="h-full flex items-end justify-center text-center pb-10">
           <div class="max-w-3xl">
             <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">{{ page.title }}</h1>
             {% if page.intro %}
@@ -31,26 +32,19 @@
       </div>
     </div>
   {% else %}
-    {# Ingen bild – samma höjd/layout så det inte ser “kort” ut #}
     <div class="absolute inset-0 bg-white border-b border-gray-100"></div>
-    <div class="relative h-full">
-      <div class="container mx-auto px-4 h-full">
-        <div class="h-full flex items-center justify-center text-center py-12 md:py-20">
-          <div class="max-w-3xl">
-            <h1 class="text-4xl md:text-5xl font-bold text-primary-800 mb-4">{{ page.title }}</h1>
-            {% if page.intro %}
-            <div class="text-lg md:text-xl text-gray-600 leading-relaxed prose prose-lg mx-auto">
-              {{ page.intro|richtext }}
-            </div>
-            {% endif %}
-          </div>
-        </div>
+    <div class="relative container mx-auto px-4 py-14">
+      <h1 class="text-4xl md:text-5xl font-bold text-primary-800 mb-4">{{ page.title }}</h1>
+      {% if page.intro %}
+      <div class="text-lg md:text-xl text-gray-600 leading-relaxed prose prose-lg mx-auto">
+        {{ page.intro|richtext }}
       </div>
+      {% endif %}
     </div>
   {% endif %}
 </section>
 
-{# LISTA MED INLÄGG – Scroll-triggered stagger #}
+{# LISTA MED INLÄGG – Stagger #}
 <section class="py-16 md:py-20 bg-background">
   <div class="container mx-auto px-4">
     {% if posts %}
@@ -83,9 +77,9 @@
                 </h2>
 
                 {% if post.intro %}
-                  <p class="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3 flex-1">
-                    {{ post.intro }}
-                  </p>
+                <p class="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3 flex-1">
+                  {{ post.intro }}
+                </p>
                 {% endif %}
 
                 <span class="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-primary-700 group-hover:gap-3 transition-all">
@@ -98,7 +92,7 @@
         {% endfor %}
       </div>
     {% else %}
-      <div class="text-center py-16 opacity-0 animate-fade-in">
+      <div class="text-center py-16 opacity-0 animate-fade-in" data-scroll>
         <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-slow">
           <i data-lucide="inbox" class="w-10 h-10 text-gray-300"></i>
         </div>
@@ -108,8 +102,8 @@
   </div>
 </section>
 
-{# CTA – Prenumerera (återställd) #}
-<section class="py-16 bg-gradient-primary relative overflow-hidden">  
+{# CTA – Prenumerera #}
+<section class="py-16 bg-gradient-primary relative overflow-hidden">
   <div class="container mx-auto px-4 relative">
     <div class="max-w-3xl mx-auto text-center opacity-0" data-scroll>
       <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -118,7 +112,6 @@
       <p class="text-xl text-white/90 mb-8">
         Få tips och nyheter om redovisning direkt i inkorgen.
       </p>
-      
       <form method="post" action="" class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
         {% csrf_token %}
         <input
@@ -136,10 +129,7 @@
           <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
         </button>
       </form>
-      
-      <p class="mt-4 text-sm text-white/70">
-        Du kan när som helst avsluta din prenumeration.
-      </p>
+      <p class="mt-4 text-sm text-white/70">Du kan när som helst avsluta din prenumeration.</p>
     </div>
   </div>
 </section>
@@ -153,25 +143,33 @@
 .blog-card{animation:fadeInUp .8s ease-out forwards}
 [data-scroll]{opacity:0;transform:translateY(30px);transition:opacity .8s ease-out,transform .8s ease-out}
 [data-scroll].visible{opacity:1;transform:translateY(0)}
+.parallax-bg{will-change:transform}
 </style>
 
 <script>
   lucide.createIcons();
+
+  // Parallax (scaled to half-viewport hero)
   const hero = document.getElementById('blog-hero');
   const img  = hero?.querySelector('.parallax-bg img');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   function onScroll(){
     if(!hero || !img || reduce) return;
     const r = hero.getBoundingClientRect();
     const progress = Math.min(1, Math.max(0, (0 - r.top) / Math.max(1, r.height)));
-    img.style.transform = `translateY(${progress*120}px) scale(1.08)`;
+    img.style.transform = `translateY(${progress*60}px) scale(1.06)`; // gentler for half-height
   }
   let ticking = false;
   window.addEventListener('scroll', () => {
     if (!ticking) { requestAnimationFrame(() => { onScroll(); ticking = false; }); ticking = true; }
   }, { passive: true });
   onScroll();
+
+  // Reveal [data-scroll] (fix CTA opacity issue)
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('[data-scroll]').forEach(el => obs.observe(el));
 </script>
 
 {% endblock %}
