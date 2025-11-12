@@ -1,14 +1,6 @@
 {# templates/partials/hero.html #}
 {% load wagtailcore_tags wagtailimages_tags %}
 
-{# Usage:
-   {% include "partials/hero.html" with
-        hero_id="page-hero"
-        hero_title=page.title
-        hero_intro=page.intro
-   %}
-#}
-
 <section id="{{ hero_id|default:'page-hero' }}"
          class="relative isolate overflow-hidden min-h-[60svh] md:min-h-[70svh] lg:min-h-[70svh]">
   {% if page.hero_image %}
