@@ -7,6 +7,11 @@ module.exports = {
     './blog/templates/**/*.html',
     './contact/templates/**/*.html',
   ],
+  safelist: [
+    'min-h-[80vh]','md:min-h-[90vh]','lg:min-h-screen',
+    'h-[85svh]','md:h-[92svh]','lg:h-screen',
+    'will-change-[transform]','transform-gpu'
+  ],
   theme: {
     extend: {
       colors: {
