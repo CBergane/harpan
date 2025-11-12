@@ -7,8 +7,6 @@ from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 import random
-from core.models import BasePage
-
 
 # =============================================================================
 # BASE PAGE CLASS - All sidor ärver från denna
