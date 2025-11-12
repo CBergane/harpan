@@ -14,7 +14,7 @@ class BlogIndexPage(BasePage):
     
     intro = RichTextField(blank=True, verbose_name="Introduktion")
     
-    content_panels = Page.content_panels + [
+    content_panels = BasePage.content_panels + [
         FieldPanel('intro'),
     ]
     
