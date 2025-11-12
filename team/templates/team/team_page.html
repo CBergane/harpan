@@ -5,20 +5,8 @@
 {% block content %}
 
 <!-- Hero Section - Fade in -->
-<section class="py-16 md:py-24 bg-gradient-to-br from-background to-white overflow-hidden">
-    <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 text-primary-800 opacity-0 animate-fade-in-up" style="animation-delay: 100ms">
-                {{ page.title }}
-            </h1>
-            {% if page.intro %}
-            <div class="text-lg md:text-xl text-gray-700 leading-relaxed prose prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay: 300ms">
-                {{ page.intro|richtext }}
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</section>
+{% include "partials/hero.html" with hero_title=page.title hero_intro=page.intro %}
+
 
 <!-- Om oss-sektion -->
 {% if page.about_content %}

@@ -4,45 +4,8 @@
 {% block content %}
 
 {# HERO – Half viewport + Parallax #}
-<section id="blog-hero"
-  class="relative isolate overflow-hidden min-h-[50vh] h-[50svh] md:min-h-[55vh] md:h-[55svh]">
-  {% if page.hero_image %}
-    <div aria-hidden="true" class="absolute inset-0">
-      <div class="parallax-bg absolute inset-0 h-full pointer-events-none will-change-[transform] transform-gpu">
-        {# Use width- to avoid server-side cropping; center the interesting area #}
-        {% image page.hero_image width-2560 class="w-full h-full object-cover object-center lg:object-[50%_40%]" loading="eager" decoding="async" sizes="100vw" %}
-      </div>
-      <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-900/80 to-primary-900/40"></div>
-      <div class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/20 to-transparent"></div>
-      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent"></div>
-    </div>
 
-    <div class="relative h-full">
-      <div class="container mx-auto px-4 h-full">
-        <div class="h-full flex items-end justify-center text-center pb-10">
-          <div class="max-w-3xl">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">{{ page.title }}</h1>
-            {% if page.intro %}
-            <div class="text-lg md:text-xl text-white/90 leading-relaxed prose prose-invert prose-lg mx-auto">
-              {{ page.intro|richtext }}
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-  {% else %}
-    <div class="absolute inset-0 bg-white border-b border-gray-100"></div>
-    <div class="relative container mx-auto px-4 py-14">
-      <h1 class="text-4xl md:text-5xl font-bold text-primary-800 mb-4">{{ page.title }}</h1>
-      {% if page.intro %}
-      <div class="text-lg md:text-xl text-gray-600 leading-relaxed prose prose-lg mx-auto">
-        {{ page.intro|richtext }}
-      </div>
-      {% endif %}
-    </div>
-  {% endif %}
-</section>
+{% include "partials/hero.html" with hero_title=page.title hero_intro=page.intro %}
 
 {# LISTA MED INLÄGG – Stagger #}
 <section class="py-16 md:py-20 bg-background">

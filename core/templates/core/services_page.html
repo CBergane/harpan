@@ -5,29 +5,8 @@
 {% block content %}
 
 {# HERO – Fade in + subtle parallax #}
-<section class="relative py-20 md:py-28 overflow-hidden">
-  {% if page.hero_image %}
-    <div class="absolute inset-0 parallax-bg">
-      {% image page.hero_image fill-1600x900 class="w-full h-full object-cover transform scale-110" %}
-    </div>
-    <div class="absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-900/80 to-primary-900/40"></div>
-  {% else %}
-    <div class="absolute inset-0 bg-primary-800"></div>
-  {% endif %}
+{% include "partials/hero.html" with hero_title=page.title hero_intro=page.intro %}
 
-  <div class="relative container mx-auto px-4">
-    <div class="max-w-3xl mx-auto text-center">
-      <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 100ms">
-        {{ page.title }}
-      </h1>
-      {% if page.intro %}
-      <div class="text-lg md:text-xl text-white/90 leading-relaxed prose prose-invert mx-auto opacity-0 animate-fade-in-up" style="animation-delay: 300ms">
-        {{ page.intro|richtext }}
-      </div>
-      {% endif %}
-    </div>
-  </div>
-</section>
 
 {# SERVICES GRID – Scroll-triggered stagger #}
 <section class="py-16 md:py-24 bg-background-light">

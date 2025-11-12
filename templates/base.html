@@ -469,6 +469,26 @@
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
         document.body.addEventListener('htmx:afterSwap', () => lucide.createIcons());
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+
+  const imgs = () => Array.from(document.querySelectorAll('.parallax-bg img'));
+  function tick(){
+    imgs().forEach(img => {
+      const sec = img.closest('section');
+      if(!sec) return;
+      const r = sec.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, (0 - r.top) / Math.max(1, r.height)));
+      img.style.transform = `translateY(${p*60}px) scale(1.06)`;
+    });
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+});
+</script>
+
     
     {% block extra_js %}{% endblock %}
 </body>

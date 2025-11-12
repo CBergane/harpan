@@ -4,6 +4,7 @@ from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, InlinePanel
 from modelcluster.fields import ParentalKey
 from core.models import BasePage
+from wagtail.admin.panels import FieldPanel, InlinePanel
 
 
 class TeamMember(Orderable):
@@ -105,23 +106,21 @@ class TeamMember(Orderable):
         return self.name.split()[0] if self.name else ""
 
 class TeamPage(BasePage):
-    """Om oss-sida med team"""
-    
     intro = RichTextField(blank=True, verbose_name="Introduktion")
-    
-    # Sektion för "Om företaget"
+
+    hero_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='+', verbose_name="Hero-bild"
+    )
+
     about_heading = models.CharField(
-        max_length=255,
-        default="Om oss",
-        verbose_name="Rubrik för Om oss-sektion"
+        max_length=255, default="Om oss", verbose_name="Rubrik för Om oss-sektion"
     )
-    about_content = RichTextField(
-        blank=True,
-        verbose_name="Om oss-innehåll",
-        help_text="Beskriv företaget innan teammedlemmarna visas"
-    )
-    
+    about_content = RichTextField(blank=True, verbose_name="Om oss-innehåll")
+
     content_panels = Page.content_panels + [
+        FieldPanel('hero_image'),
         FieldPanel('intro'),
         FieldPanel('about_heading'),
         FieldPanel('about_content'),

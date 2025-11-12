@@ -3,6 +3,7 @@ from wagtail.models import Page
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel
 from core.models import BasePage
+from wagtail.admin.panels import FieldPanel, InlinePanel
 
 
 class ContactPage(BasePage):
@@ -28,7 +29,14 @@ class ContactPage(BasePage):
         verbose_name="GDPR-text"
     )
     
+    hero_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='+', verbose_name="Hero-bild"
+    )
+
     content_panels = Page.content_panels + [
+        FieldPanel('hero_image'),
         FieldPanel('intro'),
         FieldPanel('address'),
         FieldPanel('phone'),
