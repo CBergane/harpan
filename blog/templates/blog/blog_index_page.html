@@ -3,50 +3,44 @@
 
 {% block content %}
 
-{# HERO – Taller + Parallax #}
-<section id="blog-hero" class="relative isolate overflow-hidden min-h-[65vh] md:min-h-[75vh]">
+{# HERO – Full-height + Parallax #}
+<section id="blog-hero" class="relative isolate overflow-hidden h-[85svh] md:h-[92vh] lg:h-screen">
   {% if page.hero_image %}
-    <!-- BG layer fills the section height -->
     <div aria-hidden="true" class="absolute inset-0">
-      <div class="parallax-bg absolute inset-0 h-full">
-        {% image page.hero_image fill-1920x1080
-           class="w-full h-full object-cover"
-           loading="eager" decoding="async" sizes="100vw" %}
+      <div class="parallax-bg absolute inset-0 h-full will-change-[transform] transform-gpu pointer-events-none">
+        {% image page.hero_image fill-2560x1440 class="w-full h-full object-cover object-center" loading="eager" decoding="async" sizes="100vw" %}
       </div>
       <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-900/80 to-primary-900/40"></div>
       <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/20 to-transparent"></div>
       <div class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/20 to-transparent"></div>
     </div>
 
-    <!-- Foreground copy matches section height -->
-    <div class="relative container mx-auto px-4">
-      <div class="min-h-[65vh] md:min-h-[75vh] pt-16 md:pt-24 flex items-end justify-center text-center">
-        <div class="max-w-3xl">
-          <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 opacity-0 animate-fade-in-up" style="animation-delay:100ms">
-            {{ page.title }}
-          </h1>
-          {% if page.intro %}
-          <div class="text-lg md:text-xl text-white/90 leading-relaxed prose prose-invert prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay:300ms">
-            {{ page.intro|richtext }}
+    <div class="relative h-full">
+      <div class="container mx-auto px-4 h-full">
+        <div class="h-full flex items-end justify-center text-center pb-12 md:pb-20">
+          <div class="max-w-3xl">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 opacity-0 animate-fade-in-up" style="animation-delay:100ms">
+              {{ page.title }}
+            </h1>
+            {% if page.intro %}
+            <div class="text-lg md:text-xl text-white/90 leading-relaxed prose prose-invert prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay:300ms">
+              {{ page.intro|richtext }}
+            </div>
+            {% endif %}
           </div>
-          {% endif %}
         </div>
       </div>
     </div>
-  {% else %}
-    <!-- Fallback utan bild -->
-    <div class="absolute inset-0 bg-white border-b border-gray-100"></div>
-    <div class="relative container mx-auto px-4">
-      <div class="max-w-3xl mx-auto text-center py-16 md:py-20">
-        <h1 class="text-4xl md:text-5xl font-bold text-primary-800 mb-4 opacity-0 animate-fade-in-up" style="animation-delay:100ms">
-          {{ page.title }}
-        </h1>
-        {% if page.intro %}
-        <div class="text-lg md:text-xl text-gray-600 leading-relaxed prose prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay:300ms">
-          {{ page.intro|richtext }}
-        </div>
-        {% endif %}
+  {% else %}    <div class="absolute inset-0 bg-white border-b border-gray-100"></div>
+    <div class="relative container mx-auto px-4 py-16 md:py-20">
+      <h1 class="text-4xl md:text-5xl font-bold text-primary-800 mb-4 opacity-0 animate-fade-in-up" style="animation-delay:100ms">
+        {{ page.title }}
+      </h1>
+      {% if page.intro %}
+      <div class="text-lg md:text-xl text-gray-600 leading-relaxed prose prose-lg mx-auto opacity-0 animate-fade-in-up" style="animation-delay:300ms">
+        {{ page.intro|richtext }}
       </div>
+      {% endif %}
     </div>
   {% endif %}
 </section>
@@ -125,33 +119,21 @@
 
 <script>
   lucide.createIcons();
-
-  // Parallax relative to hero (smoother & stronger)
   const hero = document.getElementById('blog-hero');
-  const layer = hero?.querySelector('.parallax-bg img');
-
+  const layer = hero?.querySelector('.parallax-bg');
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function onScroll() {
     if (!hero || !layer || prefersReduced) return;
-
-    const rect = hero.getBoundingClientRect();
-    // progress: 0 at top entering viewport, 1 when fully scrolled past
-    const progress = Math.min(1, Math.max(0, (0 - rect.top) / Math.max(1, rect.height)));
-    const translate = progress * 80; // tweak: larger value = stronger parallax
-
-    layer.style.willChange = 'transform';
+    const r = hero.getBoundingClientRect();
+    const progress = Math.min(1, Math.max(0, (0 - r.top) / Math.max(1, r.height)));
+    const translate = progress * 100; // öka/sänk för mer/mindre effekt
     layer.style.transform = `translateY(${translate}px) scale(1.08)`;
   }
-
-  // rAF for smoothness
   let ticking = false;
   window.addEventListener('scroll', () => {
     if (!ticking) {
-      window.requestAnimationFrame(() => {
-        onScroll();
-        ticking = false;
-      });
+      requestAnimationFrame(() => { onScroll(); ticking = false; });
       ticking = true;
     }
   }, { passive: true });
