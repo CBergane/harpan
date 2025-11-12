@@ -5,8 +5,8 @@
 {% block content %}
 
 <!-- Hero Section - Fade in -->
-{% include "partials/hero.html" with hero_title=page.title hero_intro=page.intro %}
 
+{% include "partials/hero.html" with page=page hero_title=page.title hero_intro=page.intro %}
 
 <!-- Om oss-sektion -->
 {% if page.about_content %}

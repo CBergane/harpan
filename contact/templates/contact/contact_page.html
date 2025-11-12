@@ -6,7 +6,8 @@
 {% block content %}
 
 {# HERO – Fade in #}
-{% include "partials/hero.html" with hero_title=page.title hero_intro=page.intro %}
+
+{% include "partials/hero.html" with page=page hero_title=page.title hero_intro=page.intro %}
 
 {# CALLBACK-SEKTION – Scale-in animation #}
 <section class="py-16 bg-gradient-primary">

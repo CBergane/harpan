@@ -7,10 +7,14 @@
     <!-- Background + overlays -->
     <div class="absolute inset-0 z-0">
       <div class="parallax-bg absolute inset-0 will-change-[transform] transform-gpu">
-        {% image page.hero_image width-2560
-           alt=page.hero_image.title
-           class="w-full h-full object-cover object-center"
-           loading="eager" decoding="async" sizes="100vw" %}
+        {% image page.hero_image width-2560 as hero_img %}
+        <img src="{{ hero_img.url }}"
+             alt="{{ page.hero_image.title }}"
+             class="w-full h-full object-cover object-center"
+             loading="eager"
+             decoding="async"
+             width="{{ hero_img.width }}"
+             height="{{ hero_img.height }}">
       </div>
 
       <!-- Brand gradient -->
@@ -23,6 +27,9 @@
       <!-- Subtle moving sheen -->
       <div class="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen animate-hero-sheen"></div>
     </div>
+  {% else %}
+    <!-- Fallback gradient background -->
+    <div class="absolute inset-0 z-0 bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900"></div>
   {% endif %}
 
   <!-- Foreground content -->
@@ -33,7 +40,7 @@
           {{ hero_title|default:page.title }}
         </h1>
 
-        {% if hero_intro|default:page.intro %}
+        {% if hero_intro or page.intro %}
           <div class="text-lg md:text-xl text-white/90 leading-relaxed prose prose-invert mx-auto opacity-0 animate-fade-in-up"
                style="animation-delay:120ms">
             {{ hero_intro|default:page.intro|richtext }}
@@ -73,7 +80,6 @@
     const r = root.getBoundingClientRect();
     const progress = Math.min(1, Math.max(0, (0 - r.top) / Math.max(1, r.height)));
     img.style.transform = `translateY(${progress * 80}px) scale(1.08)`;
-    img.style.willChange = 'transform';
   }
 
   let ticking = false;
