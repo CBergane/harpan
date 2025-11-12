@@ -7,6 +7,7 @@ from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 import random
+from core.models import BasePage
 
 
 # =============================================================================
@@ -361,49 +362,39 @@ class HomePage(BasePage):
 # =============================================================================
 class ServicesPage(BasePage):
     """Tjänstesida med lista av tjänster"""
-    
-    intro = RichTextField(
+
+    hero_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
         blank=True,
-        verbose_name="Introduktion"
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name='Hero-bild',
+        help_text='Stor toppbild för sidan'
     )
-    
-    # StreamField för tjänster
+
+    intro = RichTextField(blank=True, verbose_name="Introduktion")
+
     services = StreamField([
         ('service', blocks.StructBlock([
-            ('icon', blocks.CharBlock(
-                help_text='Lucide icon namn (t.ex. calculator, users, file-text)',
-                label='Ikon'
-            )),
+            ('icon', blocks.CharBlock(help_text='Lucide-ikon, t.ex. calculator', label='Ikon')),
             ('title', blocks.CharBlock(label='Titel')),
             ('description', blocks.TextBlock(label='Beskrivning')),
-            ('features', blocks.ListBlock(
-                blocks.CharBlock(label='Funktion'),
-                label='Funktioner/Fördelar'
-            )),
-            ('price_info', blocks.CharBlock(
-                required=False,
-                label='Prisinformation',
-                help_text='T.ex. "Från 2000 kr/mån" (valfritt)'
-            )),
-            ('cta_text', blocks.CharBlock(
-                default='Läs mer',
-                label='Knapptext'
-            )),
-            ('cta_link', blocks.URLBlock(
-                required=False,
-                label='Knapp-länk (valfritt)'
-            )),
+            ('features', blocks.ListBlock(blocks.CharBlock(label='Funktion'), label='Funktioner/Fördelar')),
+            ('price_info', blocks.CharBlock(required=False, label='Prisinformation')),
+            ('cta_text', blocks.CharBlock(default='Läs mer', label='Knapptext')),
+            ('cta_link', blocks.URLBlock(required=False, label='Knapp-länk')),
         ], icon='briefcase', label='Tjänst'))
     ], blank=True, use_json_field=True, verbose_name="Tjänster")
-    
+
     content_panels = Page.content_panels + [
+        FieldPanel('hero_image'),
         FieldPanel('intro'),
         FieldPanel('services'),
     ]
-    
+
     class Meta:
-        verbose_name = "Tjänstesida"
-        
+        verbose_name = "Tjänstesida"        
 # =============================================================================
 # LEGAL PAGE (integritetspolicy, villkor osv)
 # =============================================================================
