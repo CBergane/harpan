@@ -140,6 +140,13 @@
                     <div class="mb-6 text-gray-700 leading-relaxed opacity-0" data-scroll>
                         {{ block.value|richtext }}
                     </div>
+
+                {% elif block.block_type == 'video' %}
+                      <div class="relative rounded-xl overflow-hidden shadow-xl bg-gray-900">
+                        <video controls playsinline preload="metadata" class="w-full h-auto">
+                            <source src="{{ block.value.url }}" type="video/mp4">
+                        </video>
+                    </div>
                     
                 {% elif block.block_type == 'image' %}
                     <!-- Image -->
