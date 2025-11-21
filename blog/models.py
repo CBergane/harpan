@@ -9,6 +9,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images import get_image_model
 from core.models import BasePage
 from wagtail.documents.models import Document
+from wagtail.documents.blocks import DocumentChooserBlock
 from django.db import models
 
 class BlogIndexPage(BasePage):
@@ -78,6 +79,7 @@ class BlogPost(BasePage):
         ('paragraph', blocks.RichTextBlock(label='Paragraf')),
         ('image', ImageChooserBlock(label='Bild')),
         ('quote', blocks.BlockQuoteBlock(label='Citat')),
+        ('video', DocumentChooserBlock()),
     ], use_json_field=True, verbose_name="Innehåll")
     
     search_fields = Page.search_fields + [

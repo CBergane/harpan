@@ -1,11 +1,13 @@
 from django.db import models
 from wagtail.models import Page, Orderable
-from wagtail.fields import RichTextField
+from wagtail.fields import RichTextField, StreamField
 from wagtail.admin.panels import FieldPanel, InlinePanel
-from modelcluster.fields import ParentalKey
+from wagtail import blocks
+from wagtail.images.blocks import ImageChooserBlock
 from wagtail.documents.models import Document
+from wagtail.documents.blocks import DocumentChooserBlock
+from modelcluster.fields import ParentalKey
 from core.models import BasePage
-from wagtail.admin.panels import FieldPanel, InlinePanel
 
 
 class TeamMember(Orderable):
@@ -31,7 +33,7 @@ class TeamMember(Orderable):
     phone = models.CharField(max_length=50, blank=True, verbose_name="Telefon")
     linkedin_url = models.URLField(blank=True, verbose_name="LinkedIn URL")
     
-    # NYTT: Calendly-länk för bokning
+    # Calendly-länk för bokning
     calendly_url = models.URLField(
         blank=True,
         verbose_name="Calendly-länk",
@@ -68,7 +70,7 @@ class TeamMember(Orderable):
         FieldPanel('email'),
         FieldPanel('phone'),
         FieldPanel('linkedin_url'),
-        FieldPanel('calendly_url'),  # NYTT fält
+        FieldPanel('calendly_url'),
         FieldPanel('availability_status'),
         FieldPanel('availability_note'),
     ]
@@ -106,33 +108,117 @@ class TeamMember(Orderable):
         """Returnerar förnamnet (första ordet i name)"""
         return self.name.split()[0] if self.name else ""
 
-class TeamPage(BasePage):
-    intro = RichTextField(blank=True, verbose_name="Introduktion")
 
+class TeamPage(BasePage):
+    """
+    Team-sida med flexible about content
+    
+    Använd about_content för:
+    - Team-intervjuer
+    - Culture videos
+    - Company history
+    - Office tour
+    - Values/Mission content
+    """
+    
+    # Hero section
     hero_image = models.ForeignKey(
         'wagtailimages.Image',
-        null=True, blank=True, on_delete=models.SET_NULL,
-        related_name='+', verbose_name="Hero-bild"
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name="Hero-bild"
     )
-
+    
     hero_video = models.ForeignKey(
         Document,
-        null=True, blank=True,
+        null=True,
+        blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name='+',
+        verbose_name="Hero video",
+        help_text="Optional: Video för hero-bakgrund"
     )
-
+    
+    intro = RichTextField(
+        blank=True,
+        verbose_name="Introduktion",
+        help_text="Kort intro-text som visas under hero"
+    )
+    
+    # About section
     about_heading = models.CharField(
-        max_length=255, default="Om oss", verbose_name="Rubrik för Om oss-sektion"
+        max_length=255,
+        default="Om oss",
+        verbose_name="Rubrik för Om oss-sektion"
     )
-    about_content = RichTextField(blank=True, verbose_name="Om oss-innehåll")
-
+    
+    # ===== FLEXIBLE ABOUT CONTENT =====
+    about_content = StreamField([
+        # Heading
+        ('heading', blocks.CharBlock(
+            form_classname="title",
+            icon='title',
+            label='Rubrik',
+            help_text='Stor rubrik'
+        )),
+        
+        # Paragraph
+        ('paragraph', blocks.RichTextBlock(
+            label='Text',
+            help_text='Löpande text'
+        )),
+        
+        # Image
+        ('image', ImageChooserBlock(
+            label='Bild',
+            help_text='Lägg till bild'
+        )),
+        
+        # Video (NYTT!)
+        ('video', DocumentChooserBlock(
+            label='Video',
+            help_text='Team-intervju, culture video, office tour etc',
+            icon='media'
+        )),
+        
+        # Quote
+        ('quote', blocks.BlockQuoteBlock(
+            label='Citat',
+            help_text='Blockquote/citat'
+        )),
+        
+        # Team Highlight (advanced block)
+        ('team_highlight', blocks.StructBlock([
+            ('title', blocks.CharBlock(
+                label='Rubrik',
+                help_text='T.ex. "Våra värderingar"'
+            )),
+            ('text', blocks.RichTextBlock(
+                label='Text'
+            )),
+            ('video', DocumentChooserBlock(
+                required=False,
+                label='Video (optional)',
+                help_text='Optional video för detta highlight'
+            )),
+            ('image', ImageChooserBlock(
+                required=False,
+                label='Bild (optional)'
+            )),
+        ], icon='group', label='Team Highlight',
+           help_text='Highlight-sektion med text + optional media')),
+        
+    ], blank=True, use_json_field=True, verbose_name="Om oss-innehåll",
+       help_text="Flexibelt innehåll för Om oss-sektionen. Lägg till videos, text, bilder i valfri ordning!")
+    
     content_panels = Page.content_panels + [
         FieldPanel('hero_image'),
         FieldPanel('hero_video'),
         FieldPanel('intro'),
         FieldPanel('about_heading'),
-        FieldPanel('about_content'),
+        FieldPanel('about_content'),  # ← NYTT: Flexibelt innehåll!
         InlinePanel('team_members', label="Teammedlemmar"),
     ]
     
