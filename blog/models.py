@@ -8,6 +8,7 @@ from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images import get_image_model
 from core.models import BasePage
+from wagtail.documents.models import Document
 from django.db import models
 
 class BlogIndexPage(BasePage):
@@ -18,9 +19,18 @@ class BlogIndexPage(BasePage):
         related_name='+',
         verbose_name='Hero-bild'
     )
+
+    hero_video = models.ForeignKey(
+        Document,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
     intro = RichTextField(blank=True)
     content_panels = Page.content_panels + [
         FieldPanel('hero_image'),
+        FieldPanel('hero_video'),
         FieldPanel('intro'),
     ]
 

@@ -1,13 +1,35 @@
 {# templates/partials/hero.html #}
-{% load wagtailcore_tags wagtailimages_tags %}
+{# FLEXIBLE HERO - Complete version with image AND video support #}
+{% load wagtailcore_tags wagtailimages_tags static %}
 
 <section id="{{ hero_id|default:'page-hero' }}"
          class="relative isolate overflow-hidden min-h-[75vh] flex items-center">
   
-  {% if page.hero_image %}
-    <!-- Background + overlays -->
-    <div class="absolute inset-0 z-0">
-      <!-- Parallax Image -->
+  <!-- Background: Video OR Image -->
+  <div class="absolute inset-0 z-0">
+    
+    {% if page.hero_video %}
+      <!-- VIDEO BACKGROUND (if hero_video field is set) -->
+      <video 
+        autoplay 
+        loop 
+        muted 
+        playsinline
+        class="absolute inset-0 w-full h-full object-cover"
+        poster="{% if page.hero_image %}{% image page.hero_image width-1920 as poster %}{{ poster.url }}{% endif %}">
+        <source src="{{ page.hero_video.file.url }}" type="video/mp4">
+        
+        <!-- Fallback to image if video fails -->
+        {% if page.hero_image %}
+          {% image page.hero_image width-2560 as hero_img %}
+          <img src="{{ hero_img.url }}"
+               alt="{{ page.hero_image.title }}"
+               class="absolute inset-0 w-full h-full object-cover">
+        {% endif %}
+      </video>
+      
+    {% elif page.hero_image %}
+      <!-- IMAGE BACKGROUND (if only hero_image is set) -->
       <div class="parallax-bg absolute inset-0 will-change-transform">
         {% image page.hero_image width-2560 as hero_img %}
         <img src="{{ hero_img.url }}"
@@ -18,37 +40,39 @@
              width="{{ hero_img.width }}"
              height="{{ hero_img.height }}">
       </div>
-
-      <!-- Sophisticated gradient overlay -->
-      <div class="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/85 to-primary-900/50"></div>
       
-      <!-- Vignette for depth -->
-      <div class="absolute inset-0">
-        <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/30 to-transparent"></div>
-        <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/30 to-transparent"></div>
-        <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black/20 to-transparent"></div>
+    {% else %}
+      <!-- FALLBACK: Gradient if no image or video -->
+      <div class="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 w-full h-full">
+        <div class="absolute inset-0 opacity-30" style="background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);"></div>
       </div>
+    {% endif %}
 
-      <!-- Subtle animated sheen -->
-      <div class="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-screen animate-hero-sheen"></div>
-      
-      <!-- Floating particles (optional subtle effect) -->
-      <div class="absolute inset-0 opacity-20">
-        <div class="particle" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
-        <div class="particle" style="left: 80%; top: 40%; animation-delay: 2s;"></div>
-        <div class="particle" style="left: 60%; top: 70%; animation-delay: 4s;"></div>
-        <div class="particle" style="left: 30%; top: 80%; animation-delay: 6s;"></div>
-      </div>
+    <!-- Sophisticated gradient overlay -->
+    <div class="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/85 to-primary-900/50"></div>
+    
+    <!-- Vignette for depth -->
+    <div class="absolute inset-0">
+      <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/30 to-transparent"></div>
+      <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/30 to-transparent"></div>
+      <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black/20 to-transparent"></div>
     </div>
-  {% else %}
-    <!-- Fallback: Beautiful gradient -->
-    <div class="absolute inset-0 z-0 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700">
-      <!-- Animated mesh gradient -->
-      <div class="absolute inset-0 opacity-30" style="background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);"></div>
-    </div>
-  {% endif %}
 
-  <!-- Foreground content - centered with generous spacing -->
+    <!-- Subtle animated sheen (only for images, not videos) -->
+    {% if not page.hero_video %}
+    <div class="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-screen animate-hero-sheen"></div>
+    {% endif %}
+    
+    <!-- Floating particles (optional subtle effect) -->
+    <div class="absolute inset-0 opacity-20">
+      <div class="particle" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
+      <div class="particle" style="left: 80%; top: 40%; animation-delay: 2s;"></div>
+      <div class="particle" style="left: 60%; top: 70%; animation-delay: 4s;"></div>
+      <div class="particle" style="left: 30%; top: 80%; animation-delay: 6s;"></div>
+    </div>
+  </div>
+
+  <!-- Foreground content -->
   <div class="relative z-10 container mx-auto px-4 py-16 md:py-20">
     <div class="max-w-5xl mx-auto md:mx-0">
       
@@ -278,6 +302,12 @@
   text-decoration: underline;
 }
 
+/* === VIDEO STYLING === */
+
+video {
+  object-fit: cover;
+}
+
 /* === RESPONSIVE === */
 
 @media (max-width: 640px) {
@@ -294,6 +324,11 @@
 /* === REDUCED MOTION === */
 
 @media (prefers-reduced-motion: reduce) {
+  /* Hide video on reduced motion */
+  video {
+    display: none;
+  }
+  
   .hero-breadcrumb,
   .hero-title,
   .hero-accent,
@@ -319,37 +354,46 @@
   const root = document.getElementById('{{ hero_id|default:"page-hero" }}');
   if (!root) return;
   
-  const img = root.querySelector('.parallax-bg img');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   
-  if (!img || reduce) return;
-
-  // Smooth parallax with RAF
-  function updateParallax() {
-    const rect = root.getBoundingClientRect();
-    const scrollProgress = Math.min(1, Math.max(0, (0 - rect.top) / Math.max(1, rect.height)));
-    
-    // Slower, smoother parallax
-    const translateY = scrollProgress * 60;
-    img.style.transform = `translateY(${translateY}px) scale(1.1)`;
+  // Handle video (NEW!)
+  const video = root.querySelector('video');
+  if (video && !reduce) {
+    video.play().catch(function(error) {
+      console.log('Video autoplay prevented:', error);
+    });
   }
-
-  // Throttled scroll handler
-  let ticking = false;
-  function onScroll() {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        updateParallax();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true });
   
-  // Initial call
-  updateParallax();
+  // Handle parallax for images (ORIGINAL CODE)
+  const img = root.querySelector('.parallax-bg img');
+  if (img && !reduce) {
+    // Smooth parallax with RAF
+    function updateParallax() {
+      const rect = root.getBoundingClientRect();
+      const scrollProgress = Math.min(1, Math.max(0, (0 - rect.top) / Math.max(1, rect.height)));
+      
+      // Slower, smoother parallax
+      const translateY = scrollProgress * 60;
+      img.style.transform = `translateY(${translateY}px) scale(1.1)`;
+    }
+
+    // Throttled scroll handler
+    let ticking = false;
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateParallax();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    
+    // Initial call
+    updateParallax();
+  }
   
   // Reinitialize Lucide icons after content loads
   if (typeof lucide !== 'undefined') {

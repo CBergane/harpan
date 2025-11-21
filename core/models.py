@@ -6,6 +6,7 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
+from wagtail.documents.models import Document  # ← För video support på sub-pages
 import random
 
 # =============================================================================
@@ -86,23 +87,8 @@ class NavigationSettings(BaseSiteSetting):
         default="https://kundportal.harpans.se",
         verbose_name="Kundportal-URL"
     )
-    
-    panels = [
-        FieldPanel('services_page'),
-        FieldPanel('team_page'),
-        FieldPanel('blog_page'),
-        FieldPanel('contact_page'),
-        FieldPanel('booking_url'),
-        FieldPanel('portal_url'),
-    ]
 
-    portal_url = models.URLField(
-        blank=True,
-        default="https://kundportal.harpans.se",
-        verbose_name="Kundportal-URL"
-    )
-
-    # --- NYTT: Sociala medier ---
+    # Sociala medier
     linkedin_url = models.URLField(
         blank=True,
         verbose_name="LinkedIn-profil",
@@ -135,7 +121,6 @@ class NavigationSettings(BaseSiteSetting):
         FieldPanel('booking_url'),
         FieldPanel('portal_url'),
 
-        # NYTT: gruppera gärna sociala länkar längst ned
         MultiFieldPanel([
             FieldPanel('linkedin_url'),
             FieldPanel('x_url'),
@@ -152,7 +137,12 @@ class NavigationSettings(BaseSiteSetting):
 # HOME PAGE - MED OM OSS-SEKTION OCH SLUMPMÄSSIGT TEAM
 # =============================================================================
 class HomePage(BasePage):
-    """Startsida med hero, om oss, tjänster och 1 featured team-medlem"""
+    """
+    Startsida med hero, om oss, tjänster och 1 featured team-medlem
+    
+    OBSERVERA: HomePage använder sin egen unika hero (home_page.html)
+    och har INTE hero_video field - den är speciell!
+    """
     
     # Hero section
     hero_title = models.CharField(
@@ -177,6 +167,8 @@ class HomePage(BasePage):
         related_name='+',
         verbose_name="Hero bild"
     )
+    
+    # INGEN hero_video här - startsidan är unik!
     
     # Om oss-sektion
     about_title = models.CharField(
@@ -289,6 +281,7 @@ class HomePage(BasePage):
             FieldPanel('hero_subtitle'),
             FieldPanel('hero_cta_text'),
             FieldPanel('hero_image'),
+            # INGEN hero_video här - startsidan är unik!
         ], heading="Hero-sektion"),
         
         MultiFieldPanel([
@@ -356,10 +349,14 @@ class HomePage(BasePage):
 
 
 # =============================================================================
-# SERVICES PAGE
+# SERVICES PAGE - MED VIDEO SUPPORT
 # =============================================================================
 class ServicesPage(BasePage):
-    """Tjänstesida med lista av tjänster"""
+    """
+    Tjänstesida med lista av tjänster
+    
+    Använder partials/hero.html och HAR hero_video support!
+    """
 
     hero_image = models.ForeignKey(
         'wagtailimages.Image',
@@ -369,6 +366,17 @@ class ServicesPage(BasePage):
         related_name='+',
         verbose_name='Hero-bild',
         help_text='Stor toppbild för sidan'
+    )
+    
+    # ← VIDEO SUPPORT! För generic hero partial
+    hero_video = models.ForeignKey(
+        Document,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name="Hero video",
+        help_text="MP4-video för hero-bakgrund. Lämna tom för att använda bild."
     )
 
     intro = RichTextField(blank=True, verbose_name="Introduktion")
@@ -387,16 +395,24 @@ class ServicesPage(BasePage):
 
     content_panels = Page.content_panels + [
         FieldPanel('hero_image'),
+        FieldPanel('hero_video'),  # ← VIDEO FIELD!
         FieldPanel('intro'),
         FieldPanel('services'),
     ]
 
     class Meta:
         verbose_name = "Tjänstesida"        
+
+
 # =============================================================================
 # LEGAL PAGE (integritetspolicy, villkor osv)
 # =============================================================================
 class LegalPage(BasePage):
+    """
+    Juridisk sida (policy etc.)
+    
+    Har INGEN hero, så ingen video support heller.
+    """
     body = RichTextField(
         blank=True,
         verbose_name="Innehåll"

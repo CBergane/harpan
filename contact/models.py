@@ -4,6 +4,7 @@ from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel
 from core.models import BasePage
 from wagtail.admin.panels import FieldPanel, InlinePanel
+from wagtail.documents.models import Document
 
 
 class ContactPage(BasePage):
@@ -35,8 +36,16 @@ class ContactPage(BasePage):
         related_name='+', verbose_name="Hero-bild"
     )
 
+    hero_video = models.ForeignKey(
+        Document,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
     content_panels = Page.content_panels + [
         FieldPanel('hero_image'),
+        FieldPanel('hero_video'),
         FieldPanel('intro'),
         FieldPanel('address'),
         FieldPanel('phone'),

@@ -3,6 +3,7 @@ from wagtail.models import Page, Orderable
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, InlinePanel
 from modelcluster.fields import ParentalKey
+from wagtail.documents.models import Document
 from core.models import BasePage
 from wagtail.admin.panels import FieldPanel, InlinePanel
 
@@ -114,6 +115,13 @@ class TeamPage(BasePage):
         related_name='+', verbose_name="Hero-bild"
     )
 
+    hero_video = models.ForeignKey(
+        Document,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
     about_heading = models.CharField(
         max_length=255, default="Om oss", verbose_name="Rubrik för Om oss-sektion"
     )
@@ -121,6 +129,7 @@ class TeamPage(BasePage):
 
     content_panels = Page.content_panels + [
         FieldPanel('hero_image'),
+        FieldPanel('hero_video'),
         FieldPanel('intro'),
         FieldPanel('about_heading'),
         FieldPanel('about_content'),
