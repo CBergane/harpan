@@ -1,14 +1,114 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags static %}
 
+{% block body_class %}is-home{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* =========================
+     HOME: Brand “Gucci”-effekt
+     ========================= */
+  body.is-home #nav-brand{
+    opacity: 0;
+    transform: translateY(2px);
+    pointer-events: none;
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+  body.is-home.is-brand-docked #nav-brand{
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  #brand-wordmark{
+    position: fixed;
+    left: 50%;
+    top: calc(var(--nav-h, 80px) + 140px);
+    transform: translate(-50%, -50%) scale(var(--scale, 1));
+    transform-origin: center;
+    pointer-events: none;
+    user-select: none;
+    z-index: 45; /* under navbar (z-50), över hero */
+    opacity: 1;
+    will-change: left, top, transform, opacity;
+  }
+  #brand-wordmark .brand-wordmark-text{
+    font-size: clamp(2.2rem, 6vw, 4.2rem);
+    line-height: 0.9;
+    opacity: .45;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 12px 28px rgba(0,0,0,.35);
+    white-space: nowrap;
+  }
+  body.is-home.is-brand-docked #brand-wordmark{
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    body.is-home #nav-brand{
+      opacity: 1 !important;
+      transform: none !important;
+      pointer-events: auto !important;
+    }
+    #brand-wordmark{ display: none !important; }
+  }
+
+  /* ===== Animations (dina) ===== */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(50px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(calc(-336px * 4)); }
+  }
+
+  .animate-fade-in-up    { animation: fadeInUp 0.8s ease-out forwards; }
+  .animate-fade-in-right { animation: fadeInRight 0.8s ease-out forwards; }
+  .animate-slide-in-left { animation: slideInLeft 0.8s ease-out forwards; }
+  .animate-scroll        { animation: scroll 30s linear infinite; }
+  .animate-scroll:hover  { animation-play-state: paused; }
+
+  /* ===== Scroll reveal ===== */
+  [data-scroll]{
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    will-change: opacity, transform;
+  }
+  [data-scroll].visible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== Parallax ===== */
+  .parallax-bg { will-change: transform; }
+</style>
+{% endblock %}
+
+{% block floating_brand %}
+<div id="brand-wordmark" aria-hidden="true">
+  <span class="brand-wordmark-text">Harpans</span>
+</div>
+{% endblock %}
+
 {% block content %}
 
-<!-- Hero Section - Fade in med parallax -->
-<section class="relative py-24 md:py-32 overflow-hidden">
+<section data-hero class="relative py-24 md:py-32 overflow-hidden">
     <!-- Bakgrundsbild med parallax -->
     <div class="absolute inset-0 parallax-bg">
-        <img 
-            src="{% static 'images/hero-office.jpeg' %}" 
+        <img
+            src="{% static 'images/hero-office.jpeg' %}"
             alt="Redovisning för moderna företag"
             class="w-full h-full object-cover transform scale-110"
         >
@@ -48,7 +148,7 @@
                     <i data-lucide="arrow-right" class="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1"></i>
                 </a>
                 {% endif %}
-                
+
                 {% if settings.core.NavigationSettings.services_page %}
                 <a href="{% pageurl settings.core.NavigationSettings.services_page %}"
                    class="inline-flex items-center gap-2 px-8 py-4 rounded-lg border-2 border-white text-white font-semibold hover:bg-white hover:text-primary-800 transition-all duration-300">
@@ -64,7 +164,7 @@
                 {% endif %}
             </div>
 
-            <!-- Trust badges - Stagger animation -->
+            <!-- Trust badges -->
             <div class="flex flex-wrap gap-4 mt-10 text-sm text-white/80">
                 <div class="flex items-center gap-2 opacity-0 animate-fade-in-right" style="animation-delay: 700ms">
                     <i data-lucide="check-circle" class="w-5 h-5"></i>
@@ -83,68 +183,56 @@
     </div>
 </section>
 
-<!-- Om oss-sektion - Scroll-triggered -->
+<!-- Om oss-sektion -->
 {% if page.about_text %}
 <section class="py-20 bg-white scroll-reveal">
-    <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto text-center mb-16 opacity-0 animate-fade-in-up" data-scroll>
-            <h2 class="text-4xl md:text-5xl font-bold text-primary-800 mb-6">
-                {{ page.about_title }}
-            </h2>
-            <div class="text-lg text-gray-700 leading-relaxed prose prose-lg mx-auto">
-                {{ page.about_text|richtext }}
-            </div>
-        </div>
-        
-        <!-- Värderingar med stagger -->
-        {% if page.value_1_title or page.value_2_title or page.value_3_title %}
-        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {% if page.value_1_title %}
-            <div class="value-card bg-white border-2 border-gray-200 rounded-2xl p-8 text-center hover:border-primary-600 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group opacity-0" data-scroll style="animation-delay: 100ms">
-                <div class="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                    <i data-lucide="{{ page.value_1_icon }}" class="w-10 h-10 text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">
-                    {{ page.value_1_title }}
-                </h3>
-                <p class="text-gray-600 leading-relaxed">
-                    {{ page.value_1_text }}
-                </p>
-            </div>
-            {% endif %}
-            
-            {% if page.value_2_title %}
-            <div class="value-card bg-white border-2 border-gray-200 rounded-2xl p-8 text-center hover:border-primary-600 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group opacity-0" data-scroll style="animation-delay: 200ms">
-                <div class="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                    <i data-lucide="{{ page.value_2_icon }}" class="w-10 h-10 text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">
-                    {{ page.value_2_title }}
-                </h3>
-                <p class="text-gray-600 leading-relaxed">
-                    {{ page.value_2_text }}
-                </p>
-            </div>
-            {% endif %}
-            
-            {% if page.value_3_title %}
-            <div class="value-card bg-white border-2 border-gray-200 rounded-2xl p-8 text-center hover:border-primary-600 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group opacity-0" data-scroll style="animation-delay: 300ms">
-                <div class="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                    <i data-lucide="{{ page.value_3_icon }}" class="w-10 h-10 text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">
-                    {{ page.value_3_title }}
-                </h3>
-                <p class="text-gray-600 leading-relaxed">
-                    {{ page.value_3_text }}
-                </p>
-            </div>
-            {% endif %}
-        </div>
-        {% endif %}
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto text-center mb-16 opacity-0 animate-fade-in-up" data-scroll>
+      <h2 class="text-4xl md:text-5xl font-bold text-primary-800 mb-6">
+        {{ page.about_title }}
+      </h2>
+      <div class="text-lg text-gray-700 leading-relaxed prose prose-lg mx-auto">
+        {{ page.about_text|richtext }}
+      </div>
     </div>
+
+    {% if page.value_1_title or page.value_2_title or page.value_3_title %}
+    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {% if page.value_1_title %}
+      <div class="value-card bg-white border-2 border-gray-200 rounded-2xl p-8 text-center hover:border-primary-600 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group opacity-0" data-scroll style="animation-delay: 100ms">
+        <div class="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+          <i data-lucide="{{ page.value_1_icon }}" class="w-10 h-10 text-white"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">{{ page.value_1_title }}</h3>
+        <p class="text-gray-600 leading-relaxed">{{ page.value_1_text }}</p>
+      </div>
+      {% endif %}
+
+      {% if page.value_2_title %}
+      <div class="value-card bg-white border-2 border-gray-200 rounded-2xl p-8 text-center hover:border-primary-600 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group opacity-0" data-scroll style="animation-delay: 200ms">
+        <div class="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+          <i data-lucide="{{ page.value_2_icon }}" class="w-10 h-10 text-white"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">{{ page.value_2_title }}</h3>
+        <p class="text-gray-600 leading-relaxed">{{ page.value_2_text }}</p>
+      </div>
+      {% endif %}
+
+      {% if page.value_3_title %}
+      <div class="value-card bg-white border-2 border-gray-200 rounded-2xl p-8 text-center hover:border-primary-600 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group opacity-0" data-scroll style="animation-delay: 300ms">
+        <div class="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+          <i data-lucide="{{ page.value_3_icon }}" class="w-10 h-10 text-white"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">{{ page.value_3_title }}</h3>
+        <p class="text-gray-600 leading-relaxed">{{ page.value_3_text }}</p>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
 </section>
 {% endif %}
+
 
 <!-- Services Section - Stagger grid -->
 <section id="tjanster" class="py-20 bg-gray-50">
@@ -608,139 +696,123 @@
         </div>
     </div>
 </section>
+{% endblock %}
 
-<style>
-/* Animations */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInRight {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes scroll {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(calc(-336px * 4));
-    }
-}
-
-.animate-fade-in-up {
-    animation: fadeInUp 0.8s ease-out forwards;
-}
-
-.animate-fade-in-right {
-    animation: fadeInRight 0.8s ease-out forwards;
-}
-
-.animate-slide-in-left {
-    animation: slideInLeft 0.8s ease-out forwards;
-}
-
-.animate-scroll {
-    animation: scroll 30s linear infinite;
-}
-
-/* Pausa animationen på hover */
-.animate-scroll:hover {
-    animation-play-state: paused;
-}
-
-/* Parallax effect */
-.parallax-bg {
-    will-change: transform;
-}
-
-/* Scroll-triggered animations */
-.scroll-reveal [data-scroll] {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-.scroll-reveal [data-scroll].visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Card animations */
-.service-card,
-.value-card,
-.feature-card {
-    animation: fadeInUp 0.8s ease-out forwards;
-}
-</style>
-
+{% block extra_js %}
 <script>
-// Initialize Lucide icons
-lucide.createIcons();
-
-// Parallax effect för hero
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const parallax = document.querySelector('.parallax-bg img');
-    if (parallax) {
-        parallax.style.transform = `translateY(${scrolled * 0.5}px) scale(1.1)`;
-    }
-});
-
-// Scroll-triggered animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
+document.addEventListener('DOMContentLoaded', () => {
+  // ===== Scroll reveal
+  const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+  const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
+      if (entry.isIntersecting) entry.target.classList.add('visible');
     });
-}, observerOptions);
+  }, observerOptions);
+  document.querySelectorAll('[data-scroll]').forEach(el => observer.observe(el));
 
-// Observe all elements with data-scroll
-document.querySelectorAll('[data-scroll]').forEach(el => {
-    observer.observe(el);
+  // ===== Instagram carousel pause on hover
+  const carousel = document.querySelector('.instagram-carousel');
+  if (carousel) {
+    carousel.addEventListener('mouseenter', () => carousel.style.animationPlayState = 'paused');
+    carousel.addEventListener('mouseleave', () => carousel.style.animationPlayState = 'running');
+  }
+
+  // ===== Parallax + Brand motion (1 rAF-loop)
+  const body = document.body;
+  const hero = document.querySelector('[data-hero]');
+  const navBrand = document.getElementById('nav-brand');
+  const wordmark = document.getElementById('brand-wordmark');
+  const parallaxImg = document.querySelector('.parallax-bg img');
+  const nav = document.querySelector('nav');
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) return;
+
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function lerp(a, b, t){ return a + (b - a) * t; }
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+  function easeInOutQuad(t){ return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2; }
+
+  function updateParallax(){
+    if (!parallaxImg) return;
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    parallaxImg.style.transform = `translateY(${y * 0.5}px) scale(1.1)`;
+  }
+
+  function updateBrand(){
+    if (!hero || !navBrand || !wordmark) return;
+
+    const navH = nav ? nav.getBoundingClientRect().height : 80;
+    const heroRect = hero.getBoundingClientRect();
+    const heroH = Math.max(1, heroRect.height);
+
+    // Hur långt vi scrollat "in" i hero
+    const scrolledInHero = clamp(-heroRect.top, 0, heroH);
+
+    // Progress: första ~60% av hero = hela flytten
+    const tRaw = clamp(scrolledInHero / (heroH * 0.60), 0, 1);
+    const t = easeOutCubic(tRaw);
+
+    // Start (i viewport-koordinater)
+    const startX = window.innerWidth / 2;
+    const startY = navH + 140; // matchar CSS-start ungefär
+
+    // End = mitten av nav-brand
+    const br = navBrand.getBoundingClientRect();
+    const endX = br.left + br.width / 2;
+    const endY = br.top + br.height / 2;
+
+    // Interpolera position + skala
+    const x = lerp(startX, endX, t);
+    const y = lerp(startY, endY, t);
+    const scale = lerp(1.0, 0.28, t);
+
+    wordmark.style.left = `${x}px`;
+    wordmark.style.top = `${y}px`;
+    wordmark.style.setProperty('--scale', String(scale));
+
+    // Fade in nav-brand nära slutet
+    const reveal = clamp((tRaw - 0.82) / 0.18, 0, 1);
+    const r = easeInOutQuad(reveal);
+
+    // På home är nav-brand “gömd” via CSS — vi styr fade via inline här
+    navBrand.style.opacity = String(r);
+    navBrand.style.transform = `translateY(${(1 - r) * 2}px)`;
+
+    // Dockad när vi nästan är framme (och hero är förbi)
+    const docked = tRaw >= 0.985 || (heroRect.bottom <= navH + 6);
+    if (docked) {
+      body.classList.add('is-brand-docked');
+      navBrand.style.opacity = '1';
+      navBrand.style.transform = 'translateY(0)';
+    } else {
+      body.classList.remove('is-brand-docked');
+    }
+
+    // Wordmark syns tills nav-brand tar över
+    wordmark.style.opacity = String(1 - r);
+  }
+
+  let ticking = false;
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      updateParallax();
+      updateBrand();
+      ticking = false;
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', () => requestAnimationFrame(() => {
+    updateParallax();
+    updateBrand();
+  }));
+
+  // init
+  updateParallax();
+  updateBrand();
 });
-
-// Pause Instagram carousel on hover (extra säkerts-bälte)
-const carousel = document.querySelector('.instagram-carousel');
-if (carousel) {
-    carousel.addEventListener('mouseenter', () => {
-        carousel.style.animationPlayState = 'paused';
-    });
-    carousel.addEventListener('mouseleave', () => {
-        carousel.style.animationPlayState = 'running';
-    });
-}
 </script>
-
 {% endblock %}

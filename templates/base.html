@@ -5,556 +5,476 @@
 <!DOCTYPE html>
 <html lang="sv" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{ page.title }} - Harpans Redovisning{% endblock %}</title>
-    
-    <!-- SEO -->
-    <meta name="description" content="{% block meta_description %}Auktoriserad redovisningsbyrå med moderna lösningar för ditt företag{% endblock %}">
-    
-    <!-- Preconnect to Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Arimo Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    
-    {% block extra_css %}{% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ page.title }} - Harpans Redovisning{% endblock %}</title>
+
+  <meta name="description" content="{% block meta_description %}Auktoriserad redovisningsbyrå med moderna lösningar för ditt företag{% endblock %}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+  {% block extra_css %}{% endblock %}
+
+  <style>
+    :root { --nav-h: 80px; }
+
+    /* ===== Drawer overlay ===== */
+    #nav-drawer-overlay{
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: var(--nav-h);
+      height: calc(100vh - var(--nav-h));
+      background: rgba(0,0,0,.30);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease;
+      z-index: 60;
+    }
+    #nav-drawer-overlay.is-open{
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* DRAWER: från höger */
+    #nav-drawer{
+      position: fixed;
+      top: var(--nav-h);
+      right: 0;
+      left: auto;
+      height: calc(100vh - var(--nav-h));
+      width: min(88vw, 380px);
+      background: var(--background, white);
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      transform: translateX(105%);
+      transition: transform 260ms ease;
+      z-index: 61;
+      overflow: auto;
+    }
+    #nav-drawer.is-open{
+      transform: translateX(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #nav-drawer,
+      #nav-drawer-overlay { transition: none !important; }
+    }
+
+    /* ===== Scroll-to-top polish ===== */
+    #scroll-to-top { backdrop-filter: blur(8px); }
+    @media (max-width: 640px) {
+      #scroll-to-top { width: 2.75rem; height: 2.75rem; bottom: 1.5rem; left: 1rem; }
+      #scroll-to-top span { display: none; }
+    }
+  </style>
 </head>
-<body class="bg-background">
+
+<body class="{% block body_class %}{% endblock %}">
+
+<!-- NAVBAR -->
 <nav class="bg-background/95 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-    <div class="container mx-auto px-4">
-        <div class="flex justify-between items-center h-20">
-            <!-- Logo -->
-            <a href="/" class="flex items-center gap-3 group">
-                <div class="w-11 h-11 rounded-xl flex items-center justify-center shadow-sm overflow-hidden transition-transform duration-300 group-hover:scale-105">
-                    <img src="{% static 'images/icon-harp.jpeg' %}" 
-                         alt="Harpans" 
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="flex flex-col leading-none">
-                    <span class="text-xl font-bold text-primary-800 tracking-tight transition-colors group-hover:text-primary-900">Harpans</span>
-                    <span class="text-[10px] text-gray-600 font-semibold uppercase tracking-widest mt-0.5">Redovisning</span>
-                </div>
-            </a>
-            
-            <!-- Desktop Navigation -->
-            <div class="hidden lg:flex items-center gap-2">
-                <a href="/" class="nav-link{% if request.path == '/' %} active{% endif %}">
-                    Hem
-                </a>
-                
-                {% if settings.core.NavigationSettings.services_page %}
-                <a href="{% pageurl settings.core.NavigationSettings.services_page %}" 
-                   class="nav-link{% if '/tjanster' in request.path %} active{% endif %}">
-                    Tjänster
-                </a>
-                {% endif %}
-                
-                {% if settings.core.NavigationSettings.team_page %}
-                <a href="{% pageurl settings.core.NavigationSettings.team_page %}" 
-                class="nav-link{% if page.id == settings.core.NavigationSettings.team_page.id or 'team' in request.path or 'om-oss' in request.path or 'personal' in request.path %} active{% endif %}">
-                    Vårt team
-                </a>
-                {% endif %}
-                
-                {% if settings.core.NavigationSettings.blog_page %}
-                <a href="{% pageurl settings.core.NavigationSettings.blog_page %}" 
-                   class="nav-link{% if '/blogg' in request.path or '/blog' in request.path %} active{% endif %}">
-                    Blogg
-                </a>
-                {% endif %}
-                
-                <!-- Divider -->
-                <div class="w-px h-8 bg-gray-200 mx-3"></div>
-                
-                <!-- CTA Buttons -->
-                <div class="flex items-center gap-2">
-                    {% if settings.core.NavigationSettings.contact_page %}
-                    <a href="{% pageurl settings.core.NavigationSettings.contact_page %}" 
-                       class="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold text-primary-800 hover:bg-primary-50 rounded-lg transition-all tracking-tight group">
-                        <i data-lucide="mail" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
-                        <span>Kontakt</span>
-                    </a>
-                    {% endif %}
-                    
-                    {% if settings.core.NavigationSettings.booking_url %}
-                    <a href="{{ settings.core.NavigationSettings.booking_url }}" 
-                       class="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold text-white bg-primary-800 hover:bg-primary-700 rounded-lg transition-all shadow-sm hover:shadow-md tracking-tight group">
-                        <i data-lucide="calendar" class="w-4 h-4 transition-transform group-hover:rotate-12"></i>
-                        <span>Boka möte</span>
-                    </a>
-                    {% endif %}
-                    
-                    {% if settings.core.NavigationSettings.portal_url %}
-                    <a href="{{ settings.core.NavigationSettings.portal_url }}" 
-                       target="_blank"
-                       rel="noopener"
-                       class="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold text-primary-800 border border-primary-800 hover:bg-primary-50 rounded-lg transition-all tracking-tight group">
-                        <i data-lucide="lock" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
-                        <span>Portal</span>
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <!-- Mobile menu button -->
-            <button id="mobile-menu-button" class="lg:hidden text-primary-800 hover:bg-primary-50 p-2 rounded-lg transition-colors">
-                <i data-lucide="menu" class="w-6 h-6"></i>
-            </button>
-        </div>
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-3 items-center h-20">
+
+      <!-- LEFT: Logo -->
+      <div class="justify-self-start">
+        <a href="/" class="flex items-center gap-3 group">
+          <div id="nav-logo-box" class="w-11 h-11 rounded-xl bg-background/95 backdrop-blur-sm ring-1 ring-black/5 flex items-center justify-center shadow-sm overflow-hidden transition-transform duration-300 group-hover:scale-105">
+            <img src="{% static 'images/icon-harp.png' %}" alt="Harpans" class="w-full h-full object-cover">
+          </div>
+        </a>
+      </div>
+
+      <!-- CENTER: Brand -->
+      <div class="justify-self-center">
+        <a href="/"
+           id="nav-brand"
+           class="flex flex-col items-center text-center leading-none select-none">
+          <span class="text-2xl md:text-3xl font-bold text-primary-800 tracking-tight">Harpans</span>
+          <span class="hidden sm:block text-[11px] text-gray-600 font-semibold uppercase tracking-widest mt-0.5">
+            Redovisning
+          </span>
+        </a>
+      </div>
+
+      <!-- RIGHT: CTA + Hamburger -->
+      <div class="justify-self-end flex items-center gap-2">
+        {% if settings.core.NavigationSettings.contact_page %}
+        <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
+           class="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold text-primary-800 hover:bg-primary-50 rounded-lg transition-all tracking-tight group">
+          <i data-lucide="mail" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+          <span class="hidden sm:inline">Kontakt</span>
+        </a>
+        {% endif %}
+
+        {% if settings.core.NavigationSettings.booking_url %}
+        <a href="{{ settings.core.NavigationSettings.booking_url }}"
+           class="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold text-white bg-primary-800 hover:bg-primary-700 rounded-lg transition-all shadow-sm hover:shadow-md tracking-tight group">
+          <i data-lucide="calendar" class="w-4 h-4 transition-transform group-hover:rotate-12"></i>
+          <span class="hidden sm:inline">Boka möte</span>
+        </a>
+        {% endif %}
+
+        {% if settings.core.NavigationSettings.portal_url %}
+        <a href="{{ settings.core.NavigationSettings.portal_url }}"
+           target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold text-primary-800 border border-primary-800 hover:bg-primary-50 rounded-lg transition-all tracking-tight group">
+          <i data-lucide="lock" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+          <span class="hidden sm:inline">Kundportal</span>
+        </a>
+        {% endif %}
+
+        <button id="nav-drawer-open"
+                class="text-primary-800 hover:bg-primary-50 p-2 rounded-lg transition-colors"
+                aria-controls="nav-drawer" aria-expanded="false"
+                aria-label="Öppna meny">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+
     </div>
-    
-    <!-- Mobile Menu (dropdown) -->
-    <div id="mobile-menu" class="lg:hidden hidden border-t border-gray-100 bg-background">
-        <div class="container mx-auto px-4 py-3 space-y-2">
-            <a href="/" 
-               class="mobile-nav-link{% if request.path == '/' %} active{% endif %}">
-                Hem
-            </a>
-            
-            {% if settings.core.NavigationSettings.services_page %}
-            <a href="{% pageurl settings.core.NavigationSettings.services_page %}" 
-               class="mobile-nav-link{% if '/tjanster' in request.path %} active{% endif %}">
-                Tjänster
-            </a>
-            {% endif %}
-            
-            {% if settings.core.NavigationSettings.team_page %}
-            <a href="{% pageurl settings.core.NavigationSettings.team_page %}" 
-               class="mobile-nav-link{% if '/team' in request.path or '/vart-team' in request.path %} active{% endif %}">
-                Vårt team
-            </a>
-            {% endif %}
-            
-            {% if settings.core.NavigationSettings.blog_page %}
-            <a href="{% pageurl settings.core.NavigationSettings.blog_page %}" 
-               class="mobile-nav-link{% if '/blogg' in request.path or '/blog' in request.path %} active{% endif %}">
-                Blogg
-            </a>
-            {% endif %}
-
-            {% if settings.core.NavigationSettings.contact_page %}
-            <a href="{% pageurl settings.core.NavigationSettings.contact_page %}" 
-               class="mobile-nav-link{% if '/kontakt' in request.path or '/contact' in request.path %} active{% endif %}">
-                Kontakt
-            </a>
-            {% endif %}
-
-            {% if settings.core.NavigationSettings.booking_url %}
-            <a href="{{ settings.core.NavigationSettings.booking_url }}" 
-               class="block px-3 py-2 rounded-lg text-sm font-medium text-primary-800 border border-primary-800 text-center hover:bg-primary-50 transition-colors">
-                Boka möte
-            </a>
-            {% endif %}
-
-            {% if settings.core.NavigationSettings.portal_url %}
-            <a href="{{ settings.core.NavigationSettings.portal_url }}" 
-               target="_blank" rel="noopener"
-               class="block px-3 py-2 rounded-lg text-sm font-medium text-white bg-primary-800 text-center hover:bg-primary-700 transition-colors">
-                Portal
-            </a>
-            {% endif %}
-        </div>
-    </div>
+  </div>
 </nav>
-    
-    <!-- Main Content -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-    
-    <!-- Footer -->
-    <footer class="bg-primary-800 text-white py-12">
-        <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
-                <!-- Company Info -->
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden">
-                            <img src="{% static 'images/icon-harp.jpeg' %}" 
-                                alt="Harpans" 
-                                class="w-8 h-8 object-contain">
-                        </div>
-                        <span class="text-xl font-bold">Harpans</span>
-                    </div>
-                    <p class="text-white/80">
-                        Auktoriserad redovisningsbyrå med fokus på modern och personlig service.
-                    </p>
-                </div>
-                
-                <!-- Quick Links -->
-                <div>
-                    <h4 class="font-bold mb-4">Snabblänkar</h4>
-                    <ul class="space-y-2 text-white/80">
-                        {% if settings.core.NavigationSettings.services_page %}
-                        <li>
-                            <a href="{% pageurl settings.core.NavigationSettings.services_page %}" 
-                               class="hover:text-white transition inline-flex items-center gap-2 group">
-                                <i data-lucide="arrow-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                                Tjänster
-                            </a>
-                        </li>
-                        {% endif %}
-                        
-                        {% if settings.core.NavigationSettings.team_page %}
-                        <li>
-                            <a href="{% pageurl settings.core.NavigationSettings.team_page %}" 
-                               class="hover:text-white transition inline-flex items-center gap-2 group">
-                                <i data-lucide="arrow-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                                Vårt team
-                            </a>
-                        </li>
-                        {% endif %}
-                        
-                        {% if settings.core.NavigationSettings.blog_page %}
-                        <li>
-                            <a href="{% pageurl settings.core.NavigationSettings.blog_page %}" 
-                               class="hover:text-white transition inline-flex items-center gap-2 group">
-                                <i data-lucide="arrow-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                                Blogg
-                            </a>
-                        </li>
-                        {% endif %}
-                        
-                        {% if settings.core.NavigationSettings.contact_page %}
-                        <li>
-                            <a href="{% pageurl settings.core.NavigationSettings.contact_page %}" 
-                               class="hover:text-white transition inline-flex items-center gap-2 group">
-                                <i data-lucide="arrow-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                                Kontakt
-                            </a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-                
-                <!-- Contact Info -->
-                <div>
-                    <h4 class="font-bold mb-4">Kontakt</h4>
-                    <ul class="space-y-3 text-white/80">
-                        <li class="flex items-center gap-2 hover:text-white transition">
-                            <i data-lucide="mail" class="w-4 h-4"></i>
-                            <a href="mailto:info@harpans.se">info@harpans.se</a>
-                        </li>
-                        <li class="flex items-center gap-2 hover:text-white transition">
-                            <i data-lucide="phone" class="w-4 h-4"></i>
-                            <a href="tel:08-123 456 78">08-123 456 78</a>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i data-lucide="map-pin" class="w-4 h-4"></i>
-                            Stockholm, Sverige
-                        </li>
-                    </ul>
-                </div>
-                
-                <!-- Social & Portal -->
-                <div>
-                    <h4 class="font-bold mb-4">Följ oss</h4>
-                        <div class="flex flex-wrap gap-3 mb-4">
-                            {% if settings.core.NavigationSettings.linkedin_url %}
-                            <a href="{{ settings.core.NavigationSettings.linkedin_url }}" 
-                            target="_blank"
-                            rel="noopener"
-                            class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center 
-                                    hover:bg-white/20 hover:scale-110 transition-all duration-300"
-                            aria-label="LinkedIn">
-                                <i data-lucide="linkedin" class="w-5 h-5"></i>
-                            </a>
-                            {% endif %}
 
-                            {% if settings.core.NavigationSettings.x_url %}
-                            <a href="{{ settings.core.NavigationSettings.x_url }}" 
-                            target="_blank"
-                            rel="noopener"
-                            class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center 
-                                    hover:bg-white/20 hover:scale-110 transition-all duration-300"
-                            aria-label="X">
-                            <svg viewBox="0 0 24 24" class="w-5 h-5" aria-hidden="true">
-                                <path
-                                    fill="currentColor"
-                                    d="M18.9 3H15.7L12.5 7.2L9 3H3.5L9.8 11.1L3.1 21H6.3L10.1 15.9L13.9 21H19.4L13.1 12.6L18.9 3Z"
-                                />
-                            </svg>
-                            </a>
-                            {% endif %}
+{# HOME kan injicera sin flytande wordmark här #}
+{% block floating_brand %}{% endblock %}
 
-                            {% if settings.core.NavigationSettings.facebook_url %}
-                            <a href="{{ settings.core.NavigationSettings.facebook_url }}" 
-                            target="_blank"
-                            rel="noopener"
-                            class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center 
-                                    hover:bg-white/20 hover:scale-110 transition-all duration-300"
-                            aria-label="Facebook">
-                                <i data-lucide="facebook" class="w-5 h-5"></i>
-                            </a>
-                            {% endif %}
+<!-- DRAWER OVERLAY -->
+<div id="nav-drawer-overlay"></div>
 
-                            {% if settings.core.NavigationSettings.instagram_url %}
-                            <a href="{{ settings.core.NavigationSettings.instagram_url }}" 
-                            target="_blank"
-                            rel="noopener"
-                            class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center 
-                                    hover:bg-white/20 hover:scale-110 transition-all duration-300"
-                            aria-label="Instagram">
-                                <i data-lucide="instagram" class="w-5 h-5"></i>
-                            </a>
-                            {% endif %}
-                        </div>
-
-                    
-                    {% if settings.core.NavigationSettings.portal_url %}
-                    <a href="{{ settings.core.NavigationSettings.portal_url }}" 
-                       target="_blank"
-                       rel="noopener"
-                       class="inline-flex items-center gap-2 text-white/80 hover:text-white transition group">
-                        <i data-lucide="external-link" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
-                        Kundportal
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <div class="border-t border-white/20 pt-8 text-center text-white/60">
-                <p>&copy; {% now "Y" %} Harpans Redovisning. Alla rättigheter förbehållna.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Callback Sidebar -->
-    <div id="callback-sidebar"
-         class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] overflow-y-auto"
-         aria-hidden="true">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform scale-95 opacity-0 transition-all duration-300"
-             id="callback-modal-content">
-            <!-- Header -->
-            <div class="flex items-center justify-between p-6 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                        <i data-lucide="phone-call" class="w-5 h-5 text-primary-800"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-primary-800">
-                        Vi ringer upp dig
-                    </h3>
-                </div>
-                <button 
-                    id="callback-close"
-                    class="text-gray-400 hover:text-gray-600 transition"
-                    aria-label="Stäng">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-            
-            <!-- Form -->
-            <div class="p-6">
-                <p class="text-gray-600 mb-6">
-                    Fyll i dina uppgifter så ringer vi upp dig inom 24 timmar.
-                </p>
-                
-                <form 
-                    hx-post="/api/callback-request/" 
-                    hx-target="#callback-modal-response"
-                    hx-swap="innerHTML"
-                    class="space-y-4">
-                    {% csrf_token %}
-                    
-                    <div>
-                        <label for="modal-callback-name" class="form-label text-sm">Namn *</label>
-                        <input type="text" id="modal-callback-name" name="name" required
-                               class="form-input" placeholder="Ditt fullständiga namn">
-                    </div>
-                    
-                    <div>
-                        <label for="modal-callback-phone" class="form-label text-sm">Telefonnummer *</label>
-                        <input type="tel" id="modal-callback-phone" name="phone" required
-                               class="form-input" placeholder="070-123 45 67" pattern="[0-9\s\-\+]+">
-                    </div>
-                    
-                    <div>
-                        <label for="modal-callback-email" class="form-label text-sm">E-post (valfritt)</label>
-                        <input type="email" id="modal-callback-email" name="email"
-                               class="form-input" placeholder="din@email.se">
-                    </div>
-                    
-                    <div>
-                        <label for="modal-callback-time" class="form-label text-sm">Bästa tid</label>
-                        <select id="modal-callback-time" name="preferred_time" class="form-input">
-                            <option value="">Välj tid...</option>
-                            <option value="morning">Förmiddag (08-12)</option>
-                            <option value="afternoon">Eftermiddag (12-17)</option>
-                            <option value="anytime">Spelar ingen roll</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <button type="submit"
-                                class="btn-primary w-full flex items-center justify-center gap-2">
-                            <i data-lucide="phone-outgoing" class="w-5 h-5"></i>
-                            Skicka förfrågan
-                        </button>
-                    </div>
-                    
-                    <div id="callback-modal-response"></div>
-                    
-                    <p class="text-xs text-gray-500 text-center">
-                        Genom att skicka godkänner du att vi kontaktar dig enligt 
-                        <a href="{% slugurl 'integritetspolicy' %}" class="text-primary-800 underline">vår integritetspolicy</a>.
-                    </p>
-                </form>
-            </div>
-        </div>
+<!-- DRAWER -->
+<aside id="nav-drawer" aria-hidden="true">
+  <div class="h-20 px-4 flex items-center justify-between border-b border-gray-100">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-background/95 ring-1 ring-black/5 overflow-hidden">
+        <img src="{% static 'images/icon-harp.png' %}" alt="Harpans" class="w-full h-full object-cover">
+      </div>
+      <div class="leading-none">
+        <div class="font-bold text-primary-900">Harpans</div>
+        <div class="text-[10px] text-gray-600 font-semibold uppercase tracking-widest mt-0.5">Redovisning</div>
+      </div>
     </div>
 
-    <!-- Callback Button -->
-    <button 
-        id="callback-trigger"
+    <button id="nav-drawer-close" class="p-2 rounded-lg hover:bg-primary-50" aria-label="Stäng meny">
+      <i data-lucide="x" class="w-6 h-6 text-primary-800"></i>
+    </button>
+  </div>
+
+  <nav class="p-4 space-y-2">
+    <a href="/" class="block px-3 py-2 rounded-lg font-semibold text-primary-900 hover:bg-primary-50 transition">Hem</a>
+
+    {% if settings.core.NavigationSettings.services_page %}
+    <a href="{% pageurl settings.core.NavigationSettings.services_page %}"
+       class="block px-3 py-2 rounded-lg font-semibold text-primary-900 hover:bg-primary-50 transition">Tjänster</a>
+    {% endif %}
+
+    {% if settings.core.NavigationSettings.team_page %}
+    <a href="{% pageurl settings.core.NavigationSettings.team_page %}"
+       class="block px-3 py-2 rounded-lg font-semibold text-primary-900 hover:bg-primary-50 transition">Vårt team</a>
+    {% endif %}
+
+    {% if settings.core.NavigationSettings.blog_page %}
+    <a href="{% pageurl settings.core.NavigationSettings.blog_page %}"
+       class="block px-3 py-2 rounded-lg font-semibold text-primary-900 hover:bg-primary-50 transition">Blogg</a>
+    {% endif %}
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Footer (din befintliga) -->
+<footer class="bg-primary-800 text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-4 gap-8 mb-8">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden">
+            <img src="{% static 'images/icon-harp.png' %}" alt="Harpans" class="w-8 h-8 object-contain">
+          </div>
+          <span class="text-xl font-bold">Harpans</span>
+        </div>
+        <p class="text-white/80">
+          Auktoriserad redovisningsbyrå med fokus på modern och personlig service.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4">Snabblänkar</h4>
+        <ul class="space-y-2 text-white/80">
+          {% if settings.core.NavigationSettings.services_page %}
+          <li><a href="{% pageurl settings.core.NavigationSettings.services_page %}" class="hover:text-white transition inline-flex items-center gap-2 group">
+            <i data-lucide="arrow-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"></i>Tjänster
+          </a></li>
+          {% endif %}
+
+          {% if settings.core.NavigationSettings.team_page %}
+          <li><a href="{% pageurl settings.core.NavigationSettings.team_page %}" class="hover:text-white transition inline-flex items-center gap-2 group">
+            <i data-lucide="arrow-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"></i>Vårt team
+          </a></li>
+          {% endif %}
+
+          {% if settings.core.NavigationSettings.blog_page %}
+          <li><a href="{% pageurl settings.core.NavigationSettings.blog_page %}" class="hover:text-white transition inline-flex items-center gap-2 group">
+            <i data-lucide="arrow-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"></i>Blogg
+          </a></li>
+          {% endif %}
+
+          {% if settings.core.NavigationSettings.contact_page %}
+          <li><a href="{% pageurl settings.core.NavigationSettings.contact_page %}" class="hover:text-white transition inline-flex items-center gap-2 group">
+            <i data-lucide="arrow-right" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"></i>Kontakt
+          </a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4">Kontakt</h4>
+        <ul class="space-y-3 text-white/80">
+          <li class="flex items-center gap-2 hover:text-white transition">
+            <i data-lucide="mail" class="w-4 h-4"></i><a href="mailto:info@harpans.se">info@harpans.se</a>
+          </li>
+          <li class="flex items-center gap-2 hover:text-white transition">
+            <i data-lucide="phone" class="w-4 h-4"></i><a href="tel:08-123 456 78">08-123 456 78</a>
+          </li>
+          <li class="flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-4 h-4"></i>Stockholm, Sverige
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4">Följ oss</h4>
+        <div class="flex flex-wrap gap-3 mb-4">
+          {% if settings.core.NavigationSettings.linkedin_url %}
+          <a href="{{ settings.core.NavigationSettings.linkedin_url }}" target="_blank" rel="noopener"
+             class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300" aria-label="LinkedIn">
+            <i data-lucide="linkedin" class="w-5 h-5"></i>
+          </a>
+          {% endif %}
+
+          {% if settings.core.NavigationSettings.instagram_url %}
+          <a href="{{ settings.core.NavigationSettings.instagram_url }}" target="_blank" rel="noopener"
+             class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300" aria-label="Instagram">
+            <i data-lucide="instagram" class="w-5 h-5"></i>
+          </a>
+          {% endif %}
+        </div>
+
+        {% if settings.core.NavigationSettings.portal_url %}
+        <a href="{{ settings.core.NavigationSettings.portal_url }}" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 text-white/80 hover:text-white transition group">
+          <i data-lucide="external-link" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
+          Kundportal
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="border-t border-white/20 pt-8 text-center text-white/60">
+      <p>&copy; {% now "Y" %} Harpans Redovisning. Alla rättigheter förbehållna.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Callback Sidebar (din befintliga) -->
+<div id="callback-sidebar"
+     class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] overflow-y-auto"
+     aria-hidden="true">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform scale-95 opacity-0 transition-all duration-300"
+       id="callback-modal-content">
+    <div class="flex items-center justify-between p-6 border-b border-gray-100">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+          <i data-lucide="phone-call" class="w-5 h-5 text-primary-800"></i>
+        </div>
+        <h3 class="text-xl font-bold text-primary-800">Vi ringer upp dig</h3>
+      </div>
+      <button id="callback-close" class="text-gray-400 hover:text-gray-600 transition" aria-label="Stäng">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <div class="p-6">
+      <p class="text-gray-600 mb-6">Fyll i dina uppgifter så ringer vi upp dig inom 24 timmar.</p>
+
+      <form hx-post="/api/callback-request/"
+            hx-target="#callback-modal-response"
+            hx-swap="innerHTML"
+            class="space-y-4">
+        {% csrf_token %}
+
+        <div>
+          <label for="modal-callback-name" class="form-label text-sm">Namn *</label>
+          <input type="text" id="modal-callback-name" name="name" required class="form-input" placeholder="Ditt fullständiga namn">
+        </div>
+
+        <div>
+          <label for="modal-callback-phone" class="form-label text-sm">Telefonnummer *</label>
+          <input type="tel" id="modal-callback-phone" name="phone" required class="form-input" placeholder="070-123 45 67" pattern="[0-9\s\-\+]+">
+        </div>
+
+        <div>
+          <label for="modal-callback-email" class="form-label text-sm">E-post (valfritt)</label>
+          <input type="email" id="modal-callback-email" name="email" class="form-input" placeholder="din@email.se">
+        </div>
+
+        <div>
+          <label for="modal-callback-time" class="form-label text-sm">Bästa tid</label>
+          <select id="modal-callback-time" name="preferred_time" class="form-input">
+            <option value="">Välj tid...</option>
+            <option value="morning">Förmiddag (08-12)</option>
+            <option value="afternoon">Eftermiddag (12-17)</option>
+            <option value="anytime">Spelar ingen roll</option>
+          </select>
+        </div>
+
+        <div>
+          <button type="submit" class="btn-primary w-full flex items-center justify-center gap-2">
+            <i data-lucide="phone-outgoing" class="w-5 h-5"></i>Skicka förfrågan
+          </button>
+        </div>
+
+        <div id="callback-modal-response"></div>
+
+        <p class="text-xs text-gray-500 text-center">
+          Genom att skicka godkänner du att vi kontaktar dig enligt
+          <a href="{% slugurl 'integritetspolicy' %}" class="text-primary-800 underline">vår integritetspolicy</a>.
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<button id="callback-trigger"
         aria-controls="callback-sidebar"
         aria-expanded="false"
         class="fixed bottom-6 right-6 z-50 bg-primary-800 text-white w-14 h-14 md:w-auto md:h-auto md:px-6 md:py-3 rounded-full shadow-glow-primary hover:scale-110 transition-all duration-300 flex items-center justify-center gap-2 group"
         aria-label="Be oss ringa upp dig">
-        <i data-lucide="phone-call" class="w-6 h-6 md:w-5 md:h-5"></i>
-        <span class="hidden md:inline font-semibold">Vi Ringer Dig</span>
-        <span class="pointer-events-none absolute inset-0 rounded-full bg-primary-800 animate-ping opacity-20"></span>
-    </button>
+  <i data-lucide="phone-call" class="w-6 h-6 md:w-5 md:h-5"></i>
+  <span class="hidden md:inline font-semibold">Vi Ringer Dig</span>
+  <span class="pointer-events-none absolute inset-0 rounded-full bg-primary-800 animate-ping opacity-20"></span>
+</button>
 
-<button 
-    id="scroll-to-top"
-    aria-label="Scrolla till toppen"
-    class="fixed bottom-6 left-6 z-40 bg-primary-800 text-white w-12 h-12 rounded-full shadow-lg
-           hover:scale-110 hover:shadow-xl transition-all duration-300
-           opacity-0 invisible translate-y-2
-           flex items-center justify-center group">
-    <i data-lucide="arrow-up" class="w-5 h-5 group-hover:-translate-y-1 transition-transform"></i>
-    
-    <!-- Tooltip -->
-    <span class="absolute right-full mr-3 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-lg
-                 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-        Tillbaka till toppen
-    </span>
-    
-    <!-- Pulse ring -->
-    <span class="pointer-events-none absolute inset-0 rounded-full bg-primary-800 animate-ping opacity-20"></span>
+<button id="scroll-to-top"
+        aria-label="Scrolla till toppen"
+        class="fixed bottom-6 left-6 z-40 bg-primary-800 text-white w-12 h-12 rounded-full shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300 opacity-0 invisible translate-y-2 flex items-center justify-center group">
+  <i data-lucide="arrow-up" class="w-5 h-5 group-hover:-translate-y-1 transition-transform"></i>
+  <span class="absolute right-full mr-3 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+    Tillbaka till toppen
+  </span>
+  <span class="pointer-events-none absolute inset-0 rounded-full bg-primary-800 animate-ping opacity-20"></span>
 </button>
 
 <script>
-(function() {
-    const scrollBtn = document.getElementById('scroll-to-top');
-    if (!scrollBtn) return;
-    
-    function updateScrollButton() {
-        const scrolled = window.pageYOffset || document.documentElement.scrollTop;
-        
-        if (scrolled > 300) {
-            scrollBtn.classList.remove('opacity-0', 'invisible', 'translate-y-2');
-            scrollBtn.classList.add('opacity-100', 'visible', 'translate-y-0');
-        } else {
-            scrollBtn.classList.remove('opacity-100', 'visible', 'translate-y-0');
-            scrollBtn.classList.add('opacity-0', 'invisible', 'translate-y-2');
-        }
+(function(){
+  function initLucide(){
+    try { window.lucide?.createIcons?.(); } catch(e) {}
+  }
+
+  function syncNavHeight(){
+    const nav = document.querySelector('nav');
+    const h = nav ? nav.getBoundingClientRect().height : 80;
+    document.documentElement.style.setProperty('--nav-h', Math.round(h) + 'px');
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    initLucide();
+    document.body.addEventListener('htmx:afterSwap', initLucide);
+
+    syncNavHeight();
+    window.addEventListener('resize', () => requestAnimationFrame(syncNavHeight));
+
+    // ===== Drawer
+    const openBtn  = document.getElementById('nav-drawer-open');
+    const closeBtn = document.getElementById('nav-drawer-close');
+    const overlay  = document.getElementById('nav-drawer-overlay');
+    const drawer   = document.getElementById('nav-drawer');
+
+    function openDrawer(){
+      drawer?.classList.add('is-open');
+      overlay?.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      drawer?.setAttribute('aria-hidden','false');
+      openBtn?.setAttribute('aria-expanded','true');
     }
-    
-    scrollBtn.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    
-    let ticking = false;
-    window.addEventListener('scroll', function() {
-        if (!ticking) {
-            window.requestAnimationFrame(function() {
-                updateScrollButton();
-                ticking = false;
-            });
-            ticking = true;
+    function closeDrawer(){
+      drawer?.classList.remove('is-open');
+      overlay?.classList.remove('is-open');
+      document.body.style.overflow = '';
+      drawer?.setAttribute('aria-hidden','true');
+      openBtn?.setAttribute('aria-expanded','false');
+      openBtn?.focus?.();
+    }
+
+    openBtn?.addEventListener('click', function(e){ e.preventDefault(); openDrawer(); });
+    closeBtn?.addEventListener('click', closeDrawer);
+    overlay?.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeDrawer(); });
+
+    // ===== Scroll-to-top
+    const scrollBtn = document.getElementById('scroll-to-top');
+    if (scrollBtn){
+      function updateScrollButton(){
+        const scrolled = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrolled > 300){
+          scrollBtn.classList.remove('opacity-0','invisible','translate-y-2');
+          scrollBtn.classList.add('opacity-100','visible','translate-y-0');
+        } else {
+          scrollBtn.classList.remove('opacity-100','visible','translate-y-0');
+          scrollBtn.classList.add('opacity-0','invisible','translate-y-2');
         }
-    }, { passive: true });
-    
-    updateScrollButton();
+      }
+      scrollBtn.addEventListener('click', function(){
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      window.addEventListener('scroll', updateScrollButton, { passive: true });
+      updateScrollButton();
+    }
+
+    // ===== Callback sidebar
+    const trigger  = document.getElementById('callback-trigger');
+    const sidebar  = document.getElementById('callback-sidebar');
+    const content  = document.getElementById('callback-modal-content');
+    const btnClose = document.getElementById('callback-close');
+    const firstInp = document.getElementById('modal-callback-name');
+
+    function openSidebar(){
+      sidebar?.classList.remove('translate-x-full');
+      content?.classList.remove('opacity-0','scale-95');
+      content?.classList.add('opacity-100','scale-100');
+      document.body.style.overflow = 'hidden';
+      sidebar?.setAttribute('aria-hidden','false');
+      trigger?.setAttribute('aria-expanded','true');
+      setTimeout(() => firstInp?.focus?.({ preventScroll: true }), 200);
+    }
+    function closeSidebar(){
+      content?.classList.add('opacity-0','scale-95');
+      content?.classList.remove('opacity-100','scale-100');
+      sidebar?.classList.add('translate-x-full');
+      document.body.style.overflow = '';
+      sidebar?.setAttribute('aria-hidden','true');
+      trigger?.setAttribute('aria-expanded','false');
+      trigger?.focus?.();
+    }
+
+    trigger?.addEventListener('click', function(e){ e.preventDefault(); openSidebar(); });
+    btnClose?.addEventListener('click', closeSidebar);
+    sidebar?.addEventListener('click', function(e){ if (e.target === sidebar) closeSidebar(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && sidebar && sidebar.getAttribute('aria-hidden') === 'false') closeSidebar(); });
+  });
 })();
 </script>
 
-<style>
-#scroll-to-top {
-    backdrop-filter: blur(8px);
-}
-
-@media (max-width: 640px) {
-    #scroll-to-top {
-        width: 2.75rem;
-        height: 2.75rem;
-        bottom: 1.5rem;
-        left: 1rem;
-    }
-    
-    #scroll-to-top .lucide {
-        width: 1rem;
-        height: 1rem;
-    }
-    
-    #scroll-to-top span {
-        display: none;
-    }
-}
-</style>
-
-    
-    <!-- Scripts -->
-    <script>
-        // Mobile Menu
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu       = document.getElementById('mobile-menu');
-
-        if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-        
-        // Initialize Lucide Icons
-        lucide.createIcons();
-
-        // Callback Sidebar
-        const trigger  = document.getElementById('callback-trigger');
-        const sidebar  = document.getElementById('callback-sidebar');
-        const content  = document.getElementById('callback-modal-content');
-        const btnClose = document.getElementById('callback-close');
-        const firstInp = document.getElementById('modal-callback-name');
-
-        function openSidebar() {
-            sidebar.classList.remove('translate-x-full');
-            content.classList.remove('opacity-0','scale-95');
-            content.classList.add('opacity-100','scale-100');
-            document.body.style.overflow = 'hidden';
-            sidebar.setAttribute('aria-hidden','false');
-            trigger?.setAttribute('aria-expanded','true');
-            setTimeout(() => firstInp?.focus({ preventScroll: true }), 200);
-        }
-
-        function closeSidebar() {
-            content.classList.add('opacity-0','scale-95');
-            content.classList.remove('opacity-100','scale-100');
-            sidebar.classList.add('translate-x-full');
-            document.body.style.overflow = '';
-            sidebar.setAttribute('aria-hidden','true');
-            trigger?.setAttribute('aria-expanded','false');
-            trigger?.focus();
-        }
-
-        trigger?.addEventListener('click', (e) => { e.preventDefault(); openSidebar(); });
-        btnClose?.addEventListener('click', closeSidebar);
-        sidebar?.addEventListener('click', (e) => { if (e.target === sidebar) closeSidebar(); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
-        document.body.addEventListener('htmx:afterSwap', () => lucide.createIcons());
-    </script>
-    
-    {% block extra_js %}{% endblock %}
+{% block extra_js %}{% endblock %}
 </body>
 </html>
