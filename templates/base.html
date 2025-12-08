@@ -115,11 +115,11 @@
         {% endif %}
 
         {% if settings.core.NavigationSettings.booking_url %}
-        <a href="{{ settings.core.NavigationSettings.booking_url }}"
-           class="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold text-white bg-primary-800 hover:bg-primary-700 rounded-lg transition-all shadow-sm hover:shadow-md tracking-tight group">
-          <i data-lucide="calendar" class="w-4 h-4 transition-transform group-hover:rotate-12"></i>
-          <span class="hidden sm:inline">Boka möte</span>
-        </a>
+      <a href="{{ settings.core.NavigationSettings.booking_url }}"
+        class="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold text-white bg-primary-800 hover:bg-primary-700 rounded-lg transition-all shadow-sm hover:shadow-md tracking-tight group whitespace-nowrap">
+        <i data-lucide="calendar" class="w-4 h-4 transition-transform group-hover:rotate-12"></i>
+        <span class="hidden sm:inline whitespace-nowrap">Boka möte</span>
+      </a>
         {% endif %}
 
         {% if settings.core.NavigationSettings.portal_url %}
@@ -175,6 +175,11 @@
        class="block px-3 py-2 rounded-lg font-semibold text-primary-900 hover:bg-primary-50 transition">Tjänster</a>
     {% endif %}
 
+    {% if settings.core.NavigationSettings.aktuellt_page %}
+    <a href="{% pageurl settings.core.NavigationSettings.aktuellt_page %}"
+      class="block px-3 py-2 rounded-lg font-semibold text-primary-900 hover:bg-primary-50 transition">Aktuellt</a>
+    {% endif %}
+
     {% if settings.core.NavigationSettings.team_page %}
     <a href="{% pageurl settings.core.NavigationSettings.team_page %}"
        class="block px-3 py-2 rounded-lg font-semibold text-primary-900 hover:bg-primary-50 transition">Vårt team</a>
@@ -189,6 +194,8 @@
 
 <!-- MAIN -->
 <main>
+  <div id="scroll-sparkle-layer" aria-hidden="true"></div>
+
   {% block content %}{% endblock %}
 </main>
 

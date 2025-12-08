@@ -6,8 +6,11 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
-from wagtail.documents.models import Document  # ← För video support på sub-pages
+from wagtail.documents.models import Document
 import random
+
+from wagtail.admin.panels import FieldPanel
+from core.services.skv_rss import get_rss_items
 
 # =============================================================================
 # BASE PAGE CLASS - All sidor ärver från denna
@@ -74,6 +77,16 @@ class NavigationSettings(BaseSiteSetting):
         verbose_name="Kontakt-sida",
         help_text="Välj kontakt-sidan"
     )
+
+    aktuellt_page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name="Aktuellt-sida",
+        help_text="Välj sidan för Aktuellt (Skatteverket-flöde)"
+    )
     
     # Externa länkar
     booking_url = models.URLField(
@@ -120,6 +133,7 @@ class NavigationSettings(BaseSiteSetting):
         FieldPanel('contact_page'),
         FieldPanel('booking_url'),
         FieldPanel('portal_url'),
+        FieldPanel('aktuellt_page'),
 
         MultiFieldPanel([
             FieldPanel('linkedin_url'),
@@ -425,3 +439,101 @@ class LegalPage(BasePage):
     class Meta:
         verbose_name = "Juridisk sida"
         verbose_name_plural = "Juridiska sidor"
+
+class AktuelltFeedBlock(blocks.StructBlock):
+    title = blocks.CharBlock(required=False, default="Skatteverket", label="Rubrik")
+    feed_url = blocks.URLBlock(label="RSS-länk")
+    max_items = blocks.IntegerBlock(required=False, default=12, min_value=1, max_value=50, label="Antal")
+    note = blocks.CharBlock(required=False, label="Valfri text (liten notis)", help_text="Visas under rubriken")
+
+    class Meta:
+        icon = "radio-full"
+        label = "RSS-flöde"
+
+
+class AktuelltPage(BasePage):
+    template = "core/aktuellt_page.html"
+
+    hero_image = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name="Hero-bild",
+    )
+
+    hero_video = models.ForeignKey(
+        Document,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name="Hero video",
+        help_text="MP4-video för hero-bakgrund. Lämna tom för att använda bild.",
+    )
+
+    hero_lede = models.CharField(
+        max_length=255,
+        blank=True,
+        default="Nyheter, notiser och pressmeddelanden från Skatteverket.",
+        verbose_name="Hero ingress",
+    )
+
+    intro = RichTextField(blank=True, verbose_name="Intro (valfritt)")
+
+    feeds = StreamField(
+        [("feed", AktuelltFeedBlock())],
+        blank=True,
+        use_json_field=True,
+        verbose_name="Flöden",
+    )
+
+    body = StreamField(
+        [
+            ("heading", blocks.CharBlock(label="Rubrik")),
+            ("paragraph", blocks.RichTextBlock(label="Text")),
+        ],
+        blank=True,
+        use_json_field=True,
+        verbose_name="Extra innehåll (valfritt)",
+    )
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel("hero_image"),
+                FieldPanel("hero_video"),
+                FieldPanel("hero_lede"),
+            ],
+            heading="Hero",
+        ),
+        FieldPanel("intro"),
+        FieldPanel("feeds"),
+        FieldPanel("body"),
+    ]
+
+    def get_context(self, request, *args, **kwargs):
+        ctx = super().get_context(request, *args, **kwargs)
+
+        feed_sections = []
+        all_items = []
+
+        for b in self.feeds:
+            v = b.value
+            items = get_rss_items(v["feed_url"], v.get("max_items") or 12)
+            title = v.get("title") or "Flöde"
+
+            for it in items:
+                all_items.append({**it, "source": title})
+
+            feed_sections.append({
+                "title": title,
+                "note": v.get("note") or "",
+                "items": items,
+            })
+
+        ctx["feed_sections"] = feed_sections
+        ctx["latest_items"] = all_items[:9]
+        return ctx
+
+    class Meta:
+        verbose_name = "Aktuellt"

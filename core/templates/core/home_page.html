@@ -237,9 +237,9 @@
 <!-- Services Section - Stagger grid -->
 <section id="tjanster" class="py-20 bg-gray-50">
     <div class="container mx-auto px-4">
-        <div class="text-center max-w-3xl mx-auto mb-16 opacity-0 animate-fade-in-up" data-scroll>
+        <div class="text-center max-w-3xl mx-auto mb-16" data-scroll>
             <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                Våra tjänster
+                <span data-sparkle class="sparkle-once">Våra tjänster</span>
             </h2>
             <p class="text-xl text-gray-600">
                 Allt du behöver för att få ordning på företagets ekonomi
@@ -701,23 +701,118 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // ===== Scroll reveal
-  const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, observerOptions);
-  document.querySelectorAll('[data-scroll]').forEach(el => observer.observe(el));
+  console.log('[home] extra_js loaded');
 
-  // ===== Instagram carousel pause on hover
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  console.log('[home] reduced_motion:', reduced);
+
+  // ---------- Edge glint on scroll ----------
+  const sparkleLayer = document.getElementById('scroll-sparkle-layer');
+
+  let lastScrollY = window.scrollY || 0;
+  let lastGlintAt = 0;
+
+  // Tweaks:
+  const GLINT_DURATION_MS = 1600;   // matchar CSS edge_glint 1600ms
+  const GLINT_COOLDOWN_MS = 700;    // hur ofta max
+  const MIN_DOWN_DELTA_PX = 20;     // hur mycket nedscroll krävs
+
+  function maybeEdgeGlint(){
+    if (reduced || !sparkleLayer) return;
+
+    const y = window.scrollY || 0;
+    const dy = y - lastScrollY;
+    lastScrollY = y;
+
+    if (dy < MIN_DOWN_DELTA_PX) return;
+
+    const now = performance.now();
+    if (now - lastGlintAt < GLINT_COOLDOWN_MS) return;
+    lastGlintAt = now;
+
+    sparkleLayer.classList.remove('is-active');
+    void sparkleLayer.offsetHeight;
+    sparkleLayer.classList.add('is-active');
+
+    clearTimeout(sparkleLayer._t);
+    sparkleLayer._t = setTimeout(() => {
+      sparkleLayer.classList.remove('is-active');
+    }, GLINT_DURATION_MS + 80);
+  }
+
+  // ---------- helpers ----------
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp  = (a, b, t) => a + (b - a) * t;
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+  const easeInOutQuad = (t) => t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
+
+  const getMaxTransitionMs = (node) => {
+    const cs = getComputedStyle(node);
+    const toMs = (v) => {
+      v = (v || '').trim();
+      if (!v) return 0;
+      return v.endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000;
+    };
+    const durs = (cs.transitionDuration || '0s').split(',').map(s => toMs(s));
+    const dels = (cs.transitionDelay || '0s').split(',').map(s => toMs(s));
+    return Math.max(...durs, 0) + Math.max(...dels, 0);
+  };
+
+  const triggerSparkle = (el) => {
+    if (!el || reduced) return;
+    if (el.dataset.sparkled === "1") return;
+
+    el.dataset.sparkled = "1";
+    el.classList.add('sparkle-active');
+    setTimeout(() => el.classList.remove('sparkle-active'), 2300);
+  };
+
+  // ---------- Scroll reveal + sparkle ----------
+  const revealObserver = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      const block = entry.target;
+      block.classList.add('visible');
+
+      if (!reduced) {
+        const waitMs = Math.max(650, getMaxTransitionMs(block) + 80);
+        block.querySelectorAll('[data-sparkle].sparkle-once')
+          .forEach(el => setTimeout(() => triggerSparkle(el), waitMs));
+      }
+
+      obs.unobserve(block);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -12% 0px' });
+
+  document.querySelectorAll('[data-scroll]').forEach(el => revealObserver.observe(el));
+
+  // ---------- Standalone sparkle ----------
+  if (!reduced) {
+    const standalone = Array.from(document.querySelectorAll('[data-sparkle].sparkle-once'))
+      .filter(el => !el.closest('[data-scroll]'));
+
+    if (standalone.length) {
+      const sparkleObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          triggerSparkle(entry.target);
+          obs.unobserve(entry.target);
+        });
+      }, { threshold: 0.35, rootMargin: '0px 0px -10% 0px' });
+
+      standalone.forEach(el => sparkleObserver.observe(el));
+    }
+  }
+
+  // ---------- Instagram carousel pause on hover ----------
   const carousel = document.querySelector('.instagram-carousel');
   if (carousel) {
     carousel.addEventListener('mouseenter', () => carousel.style.animationPlayState = 'paused');
     carousel.addEventListener('mouseleave', () => carousel.style.animationPlayState = 'running');
   }
 
-  // ===== Parallax + Brand motion (1 rAF-loop)
+  // ---------- Parallax + Brand motion ----------
   const body = document.body;
   const hero = document.querySelector('[data-hero]');
   const navBrand = document.getElementById('nav-brand');
@@ -725,13 +820,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const parallaxImg = document.querySelector('.parallax-bg img');
   const nav = document.querySelector('nav');
 
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduced) return;
-
-  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
-  function lerp(a, b, t){ return a + (b - a) * t; }
-  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
-  function easeInOutQuad(t){ return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2; }
 
   function updateParallax(){
     if (!parallaxImg) return;
@@ -746,40 +835,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroRect = hero.getBoundingClientRect();
     const heroH = Math.max(1, heroRect.height);
 
-    // Hur långt vi scrollat "in" i hero
     const scrolledInHero = clamp(-heroRect.top, 0, heroH);
-
-    // Progress: första ~60% av hero = hela flytten
     const tRaw = clamp(scrolledInHero / (heroH * 0.60), 0, 1);
     const t = easeOutCubic(tRaw);
 
-    // Start (i viewport-koordinater)
     const startX = window.innerWidth / 2;
-    const startY = navH + 140; // matchar CSS-start ungefär
+    const startY = navH + 140;
 
-    // End = mitten av nav-brand
     const br = navBrand.getBoundingClientRect();
     const endX = br.left + br.width / 2;
     const endY = br.top + br.height / 2;
 
-    // Interpolera position + skala
     const x = lerp(startX, endX, t);
     const y = lerp(startY, endY, t);
     const scale = lerp(1.0, 0.28, t);
 
     wordmark.style.left = `${x}px`;
-    wordmark.style.top = `${y}px`;
+    wordmark.style.top  = `${y}px`;
     wordmark.style.setProperty('--scale', String(scale));
 
-    // Fade in nav-brand nära slutet
     const reveal = clamp((tRaw - 0.82) / 0.18, 0, 1);
     const r = easeInOutQuad(reveal);
 
-    // På home är nav-brand “gömd” via CSS — vi styr fade via inline här
     navBrand.style.opacity = String(r);
     navBrand.style.transform = `translateY(${(1 - r) * 2}px)`;
 
-    // Dockad när vi nästan är framme (och hero är förbi)
     const docked = tRaw >= 0.985 || (heroRect.bottom <= navH + 6);
     if (docked) {
       body.classList.add('is-brand-docked');
@@ -789,7 +869,6 @@ document.addEventListener('DOMContentLoaded', () => {
       body.classList.remove('is-brand-docked');
     }
 
-    // Wordmark syns tills nav-brand tar över
     wordmark.style.opacity = String(1 - r);
   }
 
@@ -800,6 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(() => {
       updateParallax();
       updateBrand();
+      maybeEdgeGlint(); // ✅ här ska den ligga
       ticking = false;
     });
   }
@@ -810,9 +890,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBrand();
   }));
 
-  // init
   updateParallax();
   updateBrand();
+  maybeEdgeGlint(); // första “känslan” om man laddar mitt i scroll
 });
 </script>
 {% endblock %}

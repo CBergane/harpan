@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% block content %}
+
+  {# HERO #}
+  {% include "partials/hero.html" with page=page hero_title=page.title hero_intro=page.hero_lede show_breadcrumb=True hero_id="aktuellt-hero" %}
+
+  {# Chips / snabblänkar – visuellt kopplade till heron #}
+  {% if feed_sections %}
+  <section class="relative z-20 -mt-10">
+    <div class="container mx-auto px-4">
+      <div class="inline-flex flex-wrap gap-2 p-3 rounded-2xl border backdrop-blur-md
+                  {% if page.hero_image or page.hero_video %}
+                    bg-white/10 border-white/20
+                  {% else %}
+                    bg-white border-gray-200
+                  {% endif %}">
+        {% for sec in feed_sections %}
+          <a href="#feed-{{ forloop.counter }}"
+             class="px-3 py-1.5 rounded-full text-sm font-semibold border transition
+                    {% if page.hero_image or page.hero_video %}
+                      bg-white/15 text-white border-white/20 hover:bg-white/25
+                    {% else %}
+                      bg-white text-primary-900 border-gray-200 hover:bg-primary-50
+                    {% endif %}">
+            {{ sec.title }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="container mx-auto px-4 py-10">
+
+    {# Intro under hero (om du vill ha mer text på sidan) #}
+    {% if page.intro %}
+      <div class="prose max-w-none mb-10">
+        {{ page.intro|richtext }}
+      </div>
+    {% endif %}
+
+    {# “Senaste uppdateringarna” – mer “magasin”-känsla #}
+    {% if latest_items %}
+      <div class="mb-12">
+        <div class="flex items-end justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-2xl font-bold text-primary-900">Senaste uppdateringarna</h2>
+            <p class="text-sm text-gray-600">Samlat från dina valda flöden.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-4">
+          {% for item in latest_items %}
+            <a href="{{ item.link }}" target="_blank" rel="noopener"
+               class="skv-card skv-card--grid {% if forloop.first %}skv-card--featured col-span-12 lg:col-span-7{% else %}col-span-12 sm:col-span-6 lg:col-span-5{% endif %}">
+              <div class="skv-top">
+                <div class="skv-badge skv-badge--{{ item.source|slugify }}">{{ item.source }}</div>
+                <div class="skv-meta">{{ item.published }}</div>
+              </div>
+
+              <div class="skv-title">{{ item.title }}</div>
+
+              {% if item.summary %}
+                <div class="skv-summary">{{ item.summary }}</div>
+              {% else %}
+                <div class="skv-summary skv-summary--empty">Klicka för att läsa mer…</div>
+              {% endif %}
+
+              <div class="skv-cta">Läs mer <span aria-hidden="true">→</span></div>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {# Flöden #}
+    {% for sec in feed_sections %}
+      <div class="mb-12 scroll-mt-28" id="feed-{{ forloop.counter }}">
+        <div class="flex items-baseline justify-between gap-4 mb-3">
+          <h2 class="text-xl font-bold text-primary-900">{{ sec.title }}</h2>
+          {% if sec.note %}<p class="text-sm text-gray-600">{{ sec.note }}</p>{% endif %}
+        </div>
+
+        {% if sec.items %}
+          <div class="skv-ticker">
+            <div class="skv-track">
+              {% for item in sec.items %}
+                <a class="skv-card" href="{{ item.link }}" target="_blank" rel="noopener">
+                  <div class="skv-badge skv-badge--{{ sec.title|slugify }}">{{ sec.title }}</div>
+                  <div class="skv-title">{{ item.title }}</div>
+                  <div class="skv-meta">{{ item.published }}</div>
+
+                  {% if item.summary %}
+                    <div class="skv-summary">{{ item.summary }}</div>
+                  {% else %}
+                    <div class="skv-summary skv-summary--empty">Klicka för att läsa mer…</div>
+                  {% endif %}
+
+                  <div class="skv-cta">Läs mer →</div>
+                </a>
+              {% endfor %}
+
+              {# duplicera samma items för “oändlig” loop #}
+              {% for item in sec.items %}
+                <a class="skv-card" href="{{ item.link }}" target="_blank" rel="noopener">
+                  <div class="skv-badge skv-badge--{{ sec.title|slugify }}">{{ sec.title }}</div>
+                  <div class="skv-title">{{ item.title }}</div>
+                  <div class="skv-meta">{{ item.published }}</div>
+
+                  {% if item.summary %}
+                    <div class="skv-summary">{{ item.summary }}</div>
+                  {% else %}
+                    <div class="skv-summary skv-summary--empty">Klicka för att läsa mer…</div>
+                  {% endif %}
+
+                  <div class="skv-cta">Läs mer →</div>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        {% else %}
+          <div class="skv-empty">
+            Inga inlägg just nu i detta flöde.
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    {# Extra innehåll #}
+    {% if page.body %}
+      <div class="prose max-w-none mt-12">
+        {{ page.body }}
+      </div>
+    {% endif %}
+
+  </section>
+{% endblock %}
