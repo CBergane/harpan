@@ -259,32 +259,43 @@
         </ul>
       </div>
 
-      <div>
-        <h4 class="font-bold mb-4">Följ oss</h4>
-        <div class="flex flex-wrap gap-3 mb-4">
-          {% if settings.core.NavigationSettings.linkedin_url %}
-          <a href="{{ settings.core.NavigationSettings.linkedin_url }}" target="_blank" rel="noopener"
-             class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300" aria-label="LinkedIn">
-            <i data-lucide="linkedin" class="w-5 h-5"></i>
-          </a>
-          {% endif %}
+      <div class="flex flex-wrap gap-3 mb-4">
+  {% if settings.core.NavigationSettings.linkedin_url %}
+  <a href="{{ settings.core.NavigationSettings.linkedin_url }}" target="_blank" rel="noopener"
+     class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300"
+     aria-label="LinkedIn">
+    <i data-lucide="linkedin" class="w-5 h-5"></i>
+  </a>
+  {% endif %}
 
-          {% if settings.core.NavigationSettings.instagram_url %}
-          <a href="{{ settings.core.NavigationSettings.instagram_url }}" target="_blank" rel="noopener"
-             class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300" aria-label="Instagram">
-            <i data-lucide="instagram" class="w-5 h-5"></i>
-          </a>
-          {% endif %}
-        </div>
+  {% if settings.core.NavigationSettings.instagram_url %}
+  <a href="{{ settings.core.NavigationSettings.instagram_url }}" target="_blank" rel="noopener"
+     class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300"
+     aria-label="Instagram">
+    <i data-lucide="instagram" class="w-5 h-5"></i>
+  </a>
+  {% endif %}
 
-        {% if settings.core.NavigationSettings.portal_url %}
-        <a href="{{ settings.core.NavigationSettings.portal_url }}" target="_blank" rel="noopener"
-           class="inline-flex items-center gap-2 text-white/80 hover:text-white transition group">
-          <i data-lucide="external-link" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
-          Kundportal
-        </a>
-        {% endif %}
-      </div>
+  {% if settings.core.NavigationSettings.facebook_url %}
+  <a href="{{ settings.core.NavigationSettings.facebook_url }}" target="_blank" rel="noopener"
+     class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300"
+     aria-label="Facebook">
+    <i data-lucide="facebook" class="w-5 h-5"></i>
+  </a>
+  {% endif %}
+
+  {% if settings.core.NavigationSettings.x_url %}
+  <a href="{{ settings.core.NavigationSettings.x_url }}" target="_blank" rel="noopener"
+     class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all duration-300"
+     aria-label="X">
+    <!-- X logo (SVG) -->
+    <svg viewBox="0 0 24 24" class="w-5 h-5" aria-hidden="true" fill="currentColor">
+      <path d="M18.9 3H15.7L12.5 7.2L9 3H3.5L9.8 11.1L3.1 21H6.3L10.1 15.9L13.9 21H19.4L13.1 12.6L18.9 3Z"/>
+    </svg>
+  </a>
+  {% endif %}
+</div>
+
     </div>
 
     <div class="border-t border-white/20 pt-8 text-center text-white/60">
