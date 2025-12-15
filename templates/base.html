@@ -325,11 +325,14 @@
     <div class="p-6">
       <p class="text-gray-600 mb-6">Fyll i dina uppgifter så ringer vi upp dig inom 24 timmar.</p>
 
-      <form hx-post="/api/callback-request/"
+        <form 
+            hx-post="{% url 'callback_request' %}" 
             hx-target="#callback-modal-response"
             hx-swap="innerHTML"
-            class="space-y-4">
-        {% csrf_token %}
+            class="space-y-6"
+        >
+            {% csrf_token %}
+            <input type="hidden" name="page_id" value="{{ page.id }}">
 
         <div>
           <label for="modal-callback-name" class="form-label text-sm">Namn *</label>
@@ -368,7 +371,13 @@
           Genom att skicka godkänner du att vi kontaktar dig enligt
           <a href="{% slugurl 'integritetspolicy' %}" class="text-primary-800 underline">vår integritetspolicy</a>.
         </p>
+          <!-- Honeypot – göms med CSS -->
+        <div class="hidden">
+          <label>Fyll inte i detta fält</label>
+          <input type="text" name="website" autocomplete="off">
+        </div>
       </form>
+      <div id="callback-modal-response"></div>
     </div>
   </div>
 </div>

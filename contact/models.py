@@ -67,6 +67,12 @@ class ContactSubmission(models.Model):
         related_name='submissions'
     )
     
+    org_number = models.CharField(
+        "Organisationsnummer",
+        max_length=32,
+        blank=True,
+        help_text="Kundens organisationsnummer (valfritt).",
+    )
     name = models.CharField(max_length=255, verbose_name="Namn")
     email = models.EmailField(verbose_name="E-post")
     phone = models.CharField(max_length=50, blank=True, verbose_name="Telefon")

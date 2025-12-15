@@ -7,7 +7,7 @@ class ContactForm(forms.ModelForm):
     
     class Meta:
         model = ContactSubmission
-        fields = ['name', 'email', 'phone', 'subject', 'message', 'gdpr_consent']
+        fields = ['name', 'email', 'phone', 'org_number', 'subject', 'message', 'gdpr_consent']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
@@ -20,6 +20,9 @@ class ContactForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
                 'placeholder': '070-123 45 67'
+            }),
+            'org_number': forms.TextInput(attrs={
+                'placeholder': "5590xxxx-xxxx",
             }),
             'subject': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent',
@@ -38,6 +41,7 @@ class ContactForm(forms.ModelForm):
             'name': 'Namn *',
             'email': 'E-post *',
             'phone': 'Telefon',
+            'org_number': 'Organisationsnummer (valfritt)',
             'subject': 'Ämne',
             'message': 'Meddelande *',
             'gdpr_consent': ''

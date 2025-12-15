@@ -65,6 +65,19 @@
                         pattern="[0-9\s\-\+]+"
                     >
                 </div>
+                <!--Org numer-->
+                <div class="form-group">
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="hash" class="w-4 h-4 text-primary-600"></i>
+                            Organisationsnummer (valfritt)
+                        </span>
+                    </label>
+                    <input type="text"
+                        name="org_number"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none transform focus:scale-105"
+                        placeholder="5590xxxx-xxxx">
+                </div>
                 
                 <!-- Email (optional) -->
                 <div class="form-group">
@@ -179,6 +192,11 @@
                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none transform focus:scale-105"
                                placeholder="Ditt namn">
                     </div>
+                      <!-- Honeypot – göms med CSS -->
+                    <div class="hidden">
+                        <label>Fyll inte i detta fält</label>
+                        <input type="text" name="website" autocomplete="off">
+                    </div>
                     
                     <!-- E-post -->
                     <div class="form-group">
@@ -193,6 +211,24 @@
                                required
                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-accent-600 focus:ring-4 focus:ring-accent-100 transition-all outline-none transform focus:scale-105"
                                placeholder="din@email.se">
+                    </div>
+
+                        <div>
+                            <label for="modal-callback-org" class="form-label text-sm">
+                                Organisationsnummer (valfritt)
+                            </label>
+                            <input 
+                                type="text"
+                                id="modal-callback-org"
+                                name="org_number"
+                                class="form-input"
+                                placeholder="5590xxxx-xxxx"
+                            >
+                        </div>
+                          <!-- Honeypot – göms med CSS -->
+                    <div class="hidden">
+                        <label>Fyll inte i detta fält</label>
+                        <input type="text" name="website" autocomplete="off">
                     </div>
                     
                     <!-- Telefon -->
