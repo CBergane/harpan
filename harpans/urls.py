@@ -9,6 +9,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from contact.views import contact_form_submit, instagram_feed, callback_request
+from blog.views import blog_subscribe, blog_unsubscribe
 
 
 # --- Extra “utility” views ---
@@ -40,6 +41,8 @@ urlpatterns = [
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
+    path("api/blog/subscribe/", blog_subscribe, name="blog_subscribe"),
+    path("blog/unsubscribe/<str:token>/", blog_unsubscribe, name="blog_unsubscribe"),
 
     # API endpoints
     path("api/contact/", contact_form_submit, name="contact_submit"),

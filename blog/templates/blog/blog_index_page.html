@@ -3,11 +3,11 @@
 
 {% block content %}
 
-{# HERO – Half viewport + Parallax #}
+{# HERO  Half viewport + Parallax #}
 
 {% include "partials/hero.html" with page=page hero_title=page.title hero_intro=page.hero_lede show_breadcrumb=True hero_id="aktuellt-hero" %}
 
-{# LISTA MED INLÄGG – Stagger #}
+{# LISTA MED INLÄGG Stagger #}
 <section class="py-16 md:py-20 bg-background">
   <div class="container mx-auto px-4">
     {% if posts %}
@@ -65,7 +65,7 @@
   </div>
 </section>
 
-{# CTA – Prenumerera #}
+{# CTA Prenumerera #}
 <section class="py-16 bg-gradient-primary relative overflow-hidden">
   <div class="container mx-auto px-4 relative">
     <div class="max-w-3xl mx-auto text-center opacity-0" data-scroll>
@@ -75,7 +75,13 @@
       <p class="text-xl text-white/90 mb-8">
         Få tips och nyheter om redovisning direkt i inkorgen.
       </p>
-      <form method="post" action="" class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+
+      <form
+        hx-post="{% url 'blog_subscribe' %}"
+        hx-target="#blog-subscribe-response"
+        hx-swap="innerHTML"
+        class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto"
+      >
         {% csrf_token %}
         <input
           type="email"
@@ -84,6 +90,13 @@
           placeholder="din@email.se"
           class="flex-1 px-6 py-4 rounded-lg border-2 border-white/20 bg-white/10 text-white placeholder-white/60 focus:bg-white focus:text-gray-900 focus:placeholder-gray-400 outline-none transition-all transform focus:scale-105"
         >
+
+        {# Honeypot göms med CSS #}
+        <div class="hidden">
+          <label>Fyll inte i detta fält</label>
+          <input type="text" name="website" autocomplete="off">
+        </div>
+
         <button
           type="submit"
           class="inline-flex items-center justify-center px-8 py-4 bg-white text-primary-800 font-semibold rounded-lg hover:bg-gray-100 hover:scale-105 transition-all shadow-lg"
@@ -92,7 +105,12 @@
           <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
         </button>
       </form>
-      <p class="mt-4 text-sm text-white/70">Du kan när som helst avsluta din prenumeration.</p>
+
+      <div id="blog-subscribe-response" class="mt-4"></div>
+
+      <p class="mt-4 text-sm text-white/70">
+        Du kan när som helst avsluta din prenumeration via länken i utskicken.
+      </p>
     </div>
   </div>
 </section>

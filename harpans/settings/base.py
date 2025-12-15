@@ -26,7 +26,7 @@ CSRF_TRUSTED_ORIGINS = [
 INSTALLED_APPS = [
     'core',
     'team',
-    'blog',
+    'blog.apps.BlogConfig',
     'contact',
     
     'wagtail.contrib.forms',

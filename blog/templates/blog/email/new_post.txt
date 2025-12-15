@@ -1,0 +1,17 @@
+Hej!
+
+Ett nytt inlägg har publicerats på Harpans Redovisning:
+
+Titel: {{ post.title }}
+Datum: {{ post.date|date:"Y-m-d H:i" }}
+
+{{ post.intro }}
+
+Läs inlägget här:
+{{ post_url }}
+
+----------------------------------------
+Du får detta mail eftersom du har anmält dig till uppdateringar från Harpans Redovisning.
+
+Om du inte längre vill få dessa utskick kan du avanmäla dig här:
+{{ unsubscribe_url }}
