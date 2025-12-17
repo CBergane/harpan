@@ -734,3 +734,10 @@ html {
 .skv-card--featured .skv-title{
   font-size: 20px;
 }
+
+/* Små skärmar: flytta H-badge lite åt vänster */
+@media (max-width: 767px){
+  .mobile-nav-badge{
+    margin-left: -10.5rem;  /* justera värdet tills det känns bra */
+  }
+}

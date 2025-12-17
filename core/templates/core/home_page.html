@@ -93,13 +93,16 @@
 
   /* ===== Parallax ===== */
   .parallax-bg { will-change: transform; }
+
+
 </style>
 {% endblock %}
 
 {% block floating_brand %}
-<div id="brand-wordmark" aria-hidden="true">
-  <span class="brand-wordmark-text">Harpans</span>
-</div>
+
+  <div id="brand-wordmark" aria-hidden="true" class="hidden md:block">
+    <span class="brand-wordmark-text">Harpans</span>
+  </div>
 {% endblock %}
 
 {% block content %}
@@ -831,6 +834,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateBrand(){
     if (!hero || !navBrand || !wordmark) return;
 
+    // 🔒 Ingen Gucci-effekt på mobil, bara vanlig navbar
+    if (window.innerWidth < 768) {
+      body.classList.add('is-brand-docked');
+      navBrand.style.opacity = '1';
+      navBrand.style.transform = 'translateY(0)';
+      wordmark.style.opacity = '0';
+      return;
+    }
+
     const navH = nav ? nav.getBoundingClientRect().height : 80;
     const heroRect = hero.getBoundingClientRect();
     const heroH = Math.max(1, heroRect.height);
@@ -879,7 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(() => {
       updateParallax();
       updateBrand();
-      maybeEdgeGlint(); // ✅ här ska den ligga
+      maybeEdgeGlint();
       ticking = false;
     });
   }
