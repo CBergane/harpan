@@ -85,11 +85,15 @@
 
       <!-- LEFT: Logo -->
       <div class="justify-self-start">
-        <a href="/" class="flex items-center gap-3 group">
-          <div id="nav-logo-box" class="w-16 h-16 rounded-xl bg-background/95 backdrop-blur-sm ring-1 ring-black/5 flex items-center justify-center shadow-sm overflow-hidden transition-transform duration-300 group-hover:scale-105">
-            <img src="{% static 'images/icon-harp-final.png' %}" alt="Harpans" class="w-full h-full object-cover">
-          </div>
-        </a>
+      {% if settings.core.NavigationSettings.contact_page %}
+              <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
+                class="inline-flex items-center gap-2 px-4 py-2 text-[15px] font-semibold text-primary-800 hover:bg-primary-50 rounded-lg transition-all tracking-tight group">
+                <i data-lucide="mail" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                <span class="hidden sm:inline">Kontakt</span>
+              </a>
+      {% endif %}
+
+
       </div>
 
       <!-- CENTER: Brand -->
@@ -108,12 +112,9 @@
           </span>
 
           <!-- DESKTOP: text-logga, staplade -->
-          <span class="hidden md:block text-2xl md:text-3xl font-bold text-primary-800 tracking-tight">
-            Harpans
-          </span>
-          <span class="hidden md:block text-[11px] text-gray-600 font-semibold uppercase tracking-widest mt-0.5">
-            Redovisning
-          </span>
+          <div id="nav-logo-box" class="w-16 h-16 rounded-xl bg-background/95 backdrop-blur-sm ring-1 ring-black/5 flex items-center justify-center shadow-sm overflow-hidden transition-transform duration-300 group-hover:scale-105">
+            <img src="{% static 'images/icon-harp-final.png' %}" alt="Harpans" class="w-full h-full object-cover">
+          </div>
         </a>
       </div>
 
