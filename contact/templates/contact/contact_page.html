@@ -18,11 +18,16 @@
       <div class="flex justify-center lg:justify-end h-full">
         <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-2xl hover:shadow-3xl transition-all opacity-0 w-full max-w-lg h-full flex flex-col"
              data-scroll>
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl flex items-center justify-center shadow-md">
-              <i data-lucide="send" class="w-6 h-6 text-white"></i>
-            </div>
-            <h2 class="text-3xl font-bold text-primary-800">Skicka ett meddelande</h2>
+            <div class="text-center mb-8">
+              <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-slow">
+                <i data-lucide="send" class="w-8 h-8 text-primary-800"></i>
+              </div>
+              <h2 class="text-3xl font-bold text-primary-800 mb-3">
+                Skicka ett meddelande
+              </h2>
+              <p class="text-gray-600">
+                Fyll i dina uppgifter så återkommer vi så snart vi kan.
+              </p>
           </div>
 
           <form
@@ -141,15 +146,17 @@
             </div>
 
             <!-- Skicka-knapp (ligger naturligt i flödet, men fortfarande innan form slutar) -->
-            <button type="submit"
-                    class="w-full bg-gradient-to-r from-primary-700 to-primary-500 hover:from-primary-800 hover:to-primary-600 text-white font-semibold px-8 py-4 rounded-lg transition-all shadow-lg hover:shadow-glow-primary transform hover:scale-[1.02] group">
-              <span class="flex items-center justify-center gap-2">
-                Skicka meddelande
-                <i data-lucide="send" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
-              </span>
-            </button>
+            <div class="mt-auto space-y-4">
+              <button type="submit"
+                      class="w-full bg-gradient-to-r from-primary-700 to-primary-500 hover:from-primary-800 hover:to-primary-600 text-white font-semibold px-8 py-4 rounded-lg transition-all shadow-lg hover:shadow-glow-primary transform hover:scale-[1.02] group">
+                <span class="flex items-center justify-center gap-2">
+                  Skicka meddelande
+                  <i data-lucide="send" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                </span>
+              </button>
 
-            <div id="form-response" class="mt-4"></div>
+              <div id="form-response" class="mt-2"></div>
+            </div>
           </form>
         </div>
       </div>
@@ -268,34 +275,36 @@
               <textarea
                 id="callback-message"
                 name="message"
-                rows="4"
+                rows="5"
                 class="form-input resize-none transform transition-all duration-300 focus:scale-105"
                 placeholder="Berätta kort vad du behöver hjälp med..."
               ></textarea>
             </div>
 
-            <div class="mt-auto">
-              <button
-                type="submit"
-                class="btn-primary w-full text-lg py-4 flex items-center justify-center gap-2 hover:scale-105 transition-transform duration-300"
-              >
-                <i data-lucide="phone-outgoing" class="w-5 h-5"></i>
-                Skicka förfrågan
-              </button>
+ <!-- GDPR-checkbox – samma stil som vänster, för alignment -->
+            <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <input type="checkbox"
+                     name="gdpr_consent"
+                     required
+                     id="callback-gdpr-checkbox"
+                     class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500 mt-0.5">
+              <label for="callback-gdpr-checkbox" class="text-sm text-gray-700 leading-relaxed">
+                {{ page.gdpr_text|striptags }}
+              </label>
             </div>
 
-            <div id="callback-response" class="mt-4"></div>
+            <!-- Bottensektion: knapp + svar, pushas längst ned -->
+            <div class="mt-auto space-y-3">
+              <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-primary-700 to-primary-500 hover:from-primary-800 hover:to-primary-600 text-white font-semibold px-8 py-4 rounded-lg transition-all shadow-lg hover:shadow-glow-primary transform hover:scale-[1.02] group flex items-center justify-center gap-2"
+              >
+                <i data-lucide="phone-outgoing" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                <span>Skicka förfrågan</span>
+              </button>
 
-            <p class="text-xs text-gray-500 text-center">
-              Genom att skicka formuläret godkänner du att vi kontaktar dig.
-              Vi hanterar dina uppgifter enligt
-              <a href="{% slugurl 'integritetspolicy' %}"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 class="text-primary-800 underline">
-                vår integritetspolicy
-              </a>
-            </p>
+              <div id="callback-response" class="mt-2"></div>
+            </div>
           </form>
         </div>
       </div>

@@ -5,8 +5,8 @@
 
 {% block extra_css %}
 <style>
-  /* =========================
-     HOME: Brand “Gucci”-effekt
+   /* =========================
+     HOME: Brand “floating icon”
      ========================= */
   body.is-home #nav-brand{
     opacity: 0;
@@ -23,7 +23,7 @@
   #brand-wordmark{
     position: fixed;
     left: 50%;
-    top: calc(var(--nav-h, 80px) + 140px);
+    top: calc(var(--nav-h, 80px) + 90px); /* 🔼 flyttad närmare navbaren */
     transform: translate(-50%, -50%) scale(var(--scale, 1));
     transform-origin: center;
     pointer-events: none;
@@ -32,28 +32,46 @@
     opacity: 1;
     will-change: left, top, transform, opacity;
   }
-  #brand-wordmark .brand-wordmark-text{
-    font-size: clamp(2.2rem, 6vw, 4.2rem);
-    line-height: 0.9;
-    opacity: .45;
-    letter-spacing: -0.02em;
-    font-weight: 800;
-    color: white;
-    text-shadow: 0 12px 28px rgba(0,0,0,.35);
-    white-space: nowrap;
+
+  #brand-wordmark .brand-wordmark-icon{
+    width: clamp(8.5rem, 12vw, 9.5rem);
+    height: clamp(8.5rem, 12vw, 9.5rem);
+    border-radius: 1.25rem;
+    
+    border: 1px solid rgba(15,23,42,0.12);
+    box-shadow: 0 18px 45px rgba(0,0,0,.45);
+    overflow: hidden;
   }
+
   body.is-home.is-brand-docked #brand-wordmark{
     opacity: 0;
   }
 
-  @media (prefers-reduced-motion: reduce){
+  @media (max-width: 767px){
+    /* Ingen Gucci-effekt på mobil */
+    #brand-wordmark{
+      display: none;
+    }
     body.is-home #nav-brand{
       opacity: 1 !important;
       transform: none !important;
       pointer-events: auto !important;
     }
-    #brand-wordmark{ display: none !important; }
   }
+
+  /* 🔽 Se till att hero-text inte krockar med ikonen */
+  body.is-home #home-hero-inner{
+    padding-top: 5rem; /* justera efter smak, t.ex. 4–6rem */
+  }
+  body.is-home.is-brand-docked #home-hero-inner{
+    padding-top: 0;
+  }
+  @media (max-width: 767px){
+    body.is-home #home-hero-inner{
+      padding-top: 0;
+    }
+  }
+
 
   /* ===== Animations (dina) ===== */
   @keyframes fadeInUp {
@@ -99,9 +117,14 @@
 {% endblock %}
 
 {% block floating_brand %}
-
-  <div id="brand-wordmark" aria-hidden="true" class="hidden md:block">
-    <span class="brand-wordmark-text">Harpans</span>
+  <div id="brand-wordmark"
+       aria-hidden="true"
+       class="flex items-center justify-center">
+    <div class="brand-wordmark-icon">
+      <img src="{% static 'images/icon-harp-final.png' %}"
+           alt="Harpans"
+           class="w-full h-full object-cover">
+    </div>
   </div>
 {% endblock %}
 
@@ -125,7 +148,7 @@
     <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/20 to-transparent"></div>
 
     <!-- Innehåll - Animated -->
-    <div class="relative container mx-auto px-4">
+    <div class="relative container mx-auto px-4" id="home-hero-inner">
         <div class="max-w-3xl text-left md:text-left">
             <h1 class="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight opacity-0 animate-fade-in-up" style="animation-delay: 100ms">
                 {{ page.hero_title }}
@@ -852,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const t = easeOutCubic(tRaw);
 
     const startX = window.innerWidth / 2;
-    const startY = navH + 140;
+    const startY = navH + 90;
 
     const br = navBrand.getBoundingClientRect();
     const endX = br.left + br.width / 2;
