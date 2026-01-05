@@ -2,6 +2,40 @@
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 
+{% block extra_css %}
+{{ block.super }}
+<style>
+  /* Styling för intro-rutan på "Aktuellt" */
+  .skv-intro-rich a{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(148, 27, 57, 0.18); /* justera till din primary om du vill */
+    color: #7f1025;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+    transition: all 180ms ease-out;
+  }
+  .skv-intro-rich a:hover{
+    background: #7f1025;
+    color: #fff;
+    border-color: #7f1025;
+    box-shadow: 0 10px 24px rgba(127,16,37,0.35);
+    transform: translateY(-1px);
+  }
+  .skv-intro-rich a::after{
+    content: "↗";
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+</style>
+{% endblock %}
+
+
 {% block content %}
 
   {# HERO #}
@@ -33,16 +67,74 @@
   </section>
   {% endif %}
 
-  <section class="container mx-auto px-4 py-10">
+<section class="container mx-auto px-4 py-10">
 
-    {# Intro under hero (om du vill ha mer text på sidan) #}
-    {% if page.intro %}
-      <div class="prose max-w-none mb-10">
-        {{ page.intro|richtext }}
+  {% if page.intro or page.rattslig_vagledning_url %}
+  <div class="mb-12">
+    <div class="rounded-3xl bg-primary-50/70 border border-primary-100/80 
+                px-6 py-7 md:px-10 md:py-8 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+        
+        {# Vänster sida: intro-text #}
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 text-xs font-semibold 
+                      uppercase tracking-widest text-primary-700 mb-2">
+            <span class="px-2.5 py-1 rounded-full bg-primary-100 text-primary-800">
+              Nyhetscenter
+            </span>
+            <span class="text-primary-700/80">Skatteverket</span>
+          </div>
+
+          <h2 class="text-2xl md:text-3xl font-bold text-primary-900 mb-3">
+            Håll koll på nya lagar, regler och viktiga datum
+          </h2>
+
+            {% if page.intro %}
+              <div class="skv-intro-rich prose prose-sm md:prose-base prose-p:mb-2 md:prose-p:mb-3">
+                {{ page.intro|richtext }}
+              </div>
+            {% else %}
+              <p class="text-gray-800 leading-relaxed">
+                Här samlar vi de senaste uppdateringarna från Skatteverket så att du
+                slipper leta själv. Sidan uppdateras automatiskt via deras RSS-flöden.
+              </p>
+            {% endif %}
+
+        </div>
+
+        {# Höger sida: små “benefit”-kort / länkar #}
+        <div class="grid gap-3 text-sm text-gray-800 md:text-right">
+          <div class="inline-flex md:justify-end items-center gap-2 px-3 py-2 
+                      rounded-full bg-white/80 border border-primary-100">
+            <i data-lucide="rss" class="w-4 h-4 text-primary-700"></i>
+            <span>Automatiskt uppdaterad via RSS</span>
+          </div>
+
+          <div class="inline-flex md:justify-end items-center gap-2 px-3 py-2 
+                      rounded-full bg-white/80 border border-primary-100">
+            <i data-lucide="shield-check" class="w-4 h-4 text-primary-700"></i>
+            <span>Direkt från Skatteverkets källor</span>
+          </div>
+
+          {% if page.rattslig_vagledning_url %}
+          <a href="{{ page.rattslig_vagledning_url }}"
+             target="_blank" rel="noopener"
+             class="inline-flex md:justify-end items-center gap-2 px-3 py-2 
+                    rounded-full bg-primary-800 text-white font-semibold
+                    hover:bg-primary-700 transition-colors">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span>Rättslig vägledning från Skatteverket</span>
+          </a>
+          {% endif %}
+        </div>
+
       </div>
-    {% endif %}
+    </div>
+  </div>
+  {% endif %}
 
-    {# “Senaste uppdateringarna” – mer “magasin”-känsla #}
+
+    {# “Senaste uppdateringarna” - mer “magasin”-känsla #}
     {% if latest_items %}
       <div class="mb-12">
         <div class="flex items-end justify-between gap-4 mb-4">
