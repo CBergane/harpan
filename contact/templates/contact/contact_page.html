@@ -338,7 +338,14 @@
                 </div>
                 <div>
                   <h4 class="font-semibold mb-1">Adress</h4>
-                  <p class="text-white/90 leading-relaxed">{{ page.address|linebreaks }}</p>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query={{ page.address|urlencode }}"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-white/90 hover:text-white underline decoration-dotted"
+                  >
+                    <span class="whitespace-pre-line">{{ page.address }}</span>
+                  </a>
                 </div>
               </div>
               {% endif %}

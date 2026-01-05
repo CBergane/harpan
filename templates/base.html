@@ -92,8 +92,6 @@
                 <span class="hidden sm:inline">Kontakt</span>
               </a>
       {% endif %}
-
-
       </div>
 
       <!-- CENTER: Brand -->
@@ -108,8 +106,6 @@
           </div>
         </a>
       </div>
-
-
 
       <!-- RIGHT: CTA + Hamburger -->
       <div class="justify-self-end flex items-center gap-2">
@@ -245,18 +241,65 @@
 
       <div>
         <h4 class="font-bold mb-4">Kontakt</h4>
-        <ul class="space-y-3 text-white/80">
-          <li class="flex items-center gap-2 hover:text-white transition">
-            <i data-lucide="mail" class="w-4 h-4"></i><a href="mailto:info@harpans.se">info@harpans.se</a>
-          </li>
-          <li class="flex items-center gap-2 hover:text-white transition">
-            <i data-lucide="phone" class="w-4 h-4"></i><a href="tel:08-123 456 78">08-123 456 78</a>
-          </li>
-          <li class="flex items-center gap-2">
-            <i data-lucide="map-pin" class="w-4 h-4"></i>Stockholm, Sverige
-          </li>
-        </ul>
+
+        {% with contact_page=settings.core.NavigationSettings.contact_page %}
+          {% if contact_page %}
+            {% with contact=contact_page.specific %}
+            <ul class="space-y-3 text-white/80">
+
+              {% if contact.email %}
+              <li class="flex items-center gap-2 hover:text-white transition">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+                <a href="mailto:{{ contact.email }}" class="hover:text-white">
+                  {{ contact.email }}
+                </a>
+              </li>
+              {% endif %}
+
+              {% if contact.phone %}
+              <li class="flex items-center gap-2 hover:text-white transition">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+                <a href="tel:{{ contact.phone }}" class="hover:text-white">
+                  {{ contact.phone }}
+                </a>
+              </li>
+              {% endif %}
+
+              {% if contact.address %}
+              <li class="flex items-center gap-2 hover:text-white transition">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query={{ contact.address|urlencode }}"
+                  target="_blank"
+                  rel="noopener"
+                  class="hover:text-white underline decoration-dotted"
+                >
+                  <span class="whitespace-pre-line">{{ contact.address }}</span>
+                </a>
+              </li>
+              {% endif %}
+
+            </ul>
+            {% endwith %}
+          {% else %}
+            {# Fallback om ingen kontakt-sida är satt i inställningar #}
+            <ul class="space-y-3 text-white/80">
+              <li class="flex items-center gap-2 hover:text-white transition">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+                <a href="mailto:info@harpans.se" class="hover:text-white">info@harpans.se</a>
+              </li>
+              <li class="flex items-center gap-2 hover:text-white transition">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+                <a href="tel:08-123 456 78" class="hover:text-white">08-123 456 78</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>Stockholm, Sverige
+              </li>
+            </ul>
+          {% endif %}
+        {% endwith %}
       </div>
+
 
       <div class="flex flex-wrap gap-3 mb-4">
   {% if settings.core.NavigationSettings.linkedin_url %}
