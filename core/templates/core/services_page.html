@@ -12,14 +12,15 @@
 <section class="py-16 md:py-24 bg-background-light">
   <div class="container mx-auto px-4">
     {% if page.services %}
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 items-stretch">
       {% for block in page.services %}
         {% if block.block_type == 'service' %}
         <article
           class="service-card relative bg-white border border-primary-50 rounded-2xl p-8
-                 opacity-0 translate-y-8
-                 hover:-translate-y-2 hover:shadow-2xl hover:border-primary-300
-                 transition-all duration-500 ease-out group"
+                opacity-0 translate-y-8
+                hover:-translate-y-2 hover:shadow-2xl hover:border-primary-300
+                transition-all duration-500 ease-out group
+                flex flex-col h-full"
           data-scroll
           style="animation-delay: {% cycle '0ms' '100ms' '200ms' '300ms' '400ms' '500ms' %}">
           
@@ -63,38 +64,38 @@
           </ul>
           {% endif %}
 
-          {% if block.value.price_info %}
-          <div class="pt-6 border-t border-gray-100 mb-6">
-            <p class="text-lg font-bold text-primary-700">
-              {{ block.value.price_info }}
-            </p>
-          </div>
-          {% endif %}
+          {% if block.value.price_info or block.value.cta_text %}
+            <div class="mt-auto pt-6 border-t border-gray-100">
+                {% if block.value.price_info %}
+                <p class="text-lg font-bold text-primary-700 mb-3">
+                    {{ block.value.price_info }}
+                </p>
+                {% endif %}
 
-          {# CTA med arrow animation #}
-          {% if block.value.cta_link %}
-          <a href="{{ block.value.cta_link }}"
-             class="inline-flex items-center gap-2 text-sm font-bold text-primary-700 hover:text-primary-800 transition-all group/btn">
-            <span>{{ block.value.cta_text }}</span>
-            <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover/btn:translate-x-2"></i>
-          </a>
-          {% else %}
-            {% if settings.core.NavigationSettings.contact_page %}
-            <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
-               class="inline-flex items-center gap-2 text-sm font-bold text-primary-700 hover:text-primary-800 transition-all group/btn">
-              <span>{{ block.value.cta_text }}</span>
-              <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover/btn:translate-x-2"></i>
-            </a>
-            {% else %}
-            <a href="/kontakt/"
-               class="inline-flex items-center gap-2 text-sm font-bold text-primary-700 hover:text-primary-800 transition-all group/btn">
-              <span>{{ block.value.cta_text }}</span>
-              <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover/btn:translate-x-2"></i>
-            </a>
+                {# CTA med arrow animation #}
+                {% if block.value.cta_link %}
+                <a href="{{ block.value.cta_link }}"
+                    class="inline-flex items-center gap-2 text-sm font-bold text-primary-700 hover:text-primary-800 transition-all group/btn">
+                    <span>{{ block.value.cta_text }}</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover/btn:translate-x-2"></i>
+                </a>
+                {% else %}
+                {% if settings.core.NavigationSettings.contact_page %}
+                    <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
+                    class="inline-flex items-center gap-2 text-sm font-bold text-primary-700 hover:text-primary-800 transition-all group/btn">
+                    <span>{{ block.value.cta_text }}</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover/btn:translate-x-2"></i>
+                    </a>
+                {% else %}
+                    <a href="/kontakt/"
+                    class="inline-flex items-center gap-2 text-sm font-bold text-primary-700 hover:text-primary-800 transition-all group/btn">
+                    <span>{{ block.value.cta_text }}</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover/btn:translate-x-2"></i>
+                    </a>
+                {% endif %}
+                {% endif %}
+            </div>
             {% endif %}
-          {% endif %}
-        </article>
-        {% endif %}
       {% endfor %}
     </div>
     {% else %}
