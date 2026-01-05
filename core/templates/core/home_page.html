@@ -131,13 +131,32 @@
 {% block content %}
 
 <section data-hero class="relative py-24 md:py-32 overflow-hidden">
-    <!-- Bakgrundsbild med parallax -->
     <div class="absolute inset-0 parallax-bg">
-        <img
-            src="{% static 'images/hero-office.jpeg' %}"
-            alt="Redovisning för moderna företag"
-            class="w-full h-full object-cover transform scale-110"
-        >
+        {% if page.hero_video %}
+            <video
+                class="w-full h-full object-cover transform scale-110"
+                autoplay
+                muted
+                loop
+                playsinline
+            >
+                <source src="{{ page.hero_video.file.url }}" type="video/mp4">
+                Din webbläsare stödjer tyvärr inte HTML5-video.
+            </video>
+        {% elif page.hero_image %}
+            {% image page.hero_image fill-1920x900 as hero_img %}
+            <img
+                src="{{ hero_img.url }}"
+                alt="{{ hero_img.alt }}"
+                class="w-full h-full object-cover transform scale-110"
+            >
+        {% else %}
+            <img
+                src="{% static 'images/hero-office.jpeg' %}"
+                alt="Redovisning för moderna företag"
+                class="w-full h-full object-cover transform scale-110"
+            >
+        {% endif %}
     </div>
 
     <!-- Färg-overlay -->

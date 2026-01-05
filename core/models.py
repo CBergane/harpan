@@ -183,7 +183,15 @@ class HomePage(BasePage):
         verbose_name="Hero bild"
     )
     
-    # INGEN hero_video här - startsidan är unik!
+    hero_video = models.ForeignKey(
+        Document,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name="Hero video",
+        help_text="MP4-video för hero-bakgrund. Lämna tom för att använda bild."
+    )
     
     # Om oss-sektion
     about_title = models.CharField(
@@ -296,7 +304,7 @@ class HomePage(BasePage):
             FieldPanel('hero_subtitle'),
             FieldPanel('hero_cta_text'),
             FieldPanel('hero_image'),
-            # INGEN hero_video här - startsidan är unik!
+            FieldPanel('hero_video'),
         ], heading="Hero-sektion"),
         
         MultiFieldPanel([
