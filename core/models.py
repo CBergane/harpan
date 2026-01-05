@@ -8,6 +8,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.documents.models import Document
 import random
+from datetime import datetime
 
 from wagtail.admin.panels import FieldPanel
 from core.services.skv_rss import get_rss_items
@@ -530,6 +531,12 @@ class AktuelltPage(BasePage):
                 "note": v.get("note") or "",
                 "items": items,
             })
+
+        # Sortera på publiceringsdatum (senaste först)
+        all_items.sort(
+            key=lambda it: it.get("published_dt") or datetime.min,
+            reverse=True,
+        )
 
         ctx["feed_sections"] = feed_sections
         ctx["latest_items"] = all_items[:9]

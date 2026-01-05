@@ -1,6 +1,9 @@
 from urllib.parse import urlparse
 import hashlib
 
+from datetime import datetime
+from calendar import timegm
+
 import feedparser
 import requests
 from django.core.cache import cache
@@ -31,11 +34,19 @@ def get_rss_items(url: str, limit: int = 8, cache_seconds: int = 1800):
         feed = feedparser.parse(r.text)
         items = []
         for e in (feed.entries or [])[:limit]:
+            # Försök få ett riktigt datetime-objekt
+            published_dt = None
+            if e.get("published_parsed"):
+                published_dt = datetime.utcfromtimestamp(timegm(e.published_parsed))
+            elif e.get("updated_parsed"):
+                published_dt = datetime.utcfromtimestamp(timegm(e.updated_parsed))
+
             items.append({
                 "title": (e.get("title") or "").strip(),
                 "link": e.get("link") or "",
                 "published": e.get("published") or e.get("updated") or "",
                 "summary": strip_tags(e.get("summary") or "")[:180],
+                "published_dt": published_dt,   # ← NYTT
             })
 
         cache.set(cache_key, items, cache_seconds)
