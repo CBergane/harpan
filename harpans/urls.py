@@ -19,8 +19,8 @@ def robots_txt(request):
         "User-agent: *",
         "Disallow:",
         # Blocka admin-paneler
-        "Disallow: /harpans-kontor/",
-        "Disallow: /harpans-django-backend/",
+        "Disallow: /admin/",
+        "Disallow: /django-admin/",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
@@ -38,8 +38,8 @@ def security_txt(request):
 # --- URL patterns ---
 
 urlpatterns = [
-    path("harpans-django-backend/", admin.site.urls),
-    path("harpans-kontor/", include(wagtailadmin_urls)),
+    path("django-admin/", admin.site.urls),
+    path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("api/blog/subscribe/", blog_subscribe, name="blog_subscribe"),
     path("blog/unsubscribe/<str:token>/", blog_unsubscribe, name="blog_unsubscribe"),
