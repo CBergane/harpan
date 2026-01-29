@@ -11,7 +11,7 @@ BASE_DIR = PROJECT_DIR.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-this')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,[::1],0.0.0.0,172.234.102.252', 
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,[::1],0.0.0.0,172.234.102.252,harpans.se',
 	cast=Csv(),
 	)
 
@@ -19,7 +19,7 @@ SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:8000", "http://localhost:8000", "http://0.0.0.0:8000", "http://172.234.102.252/"
+    "http://127.0.0.1:8000", "http://localhost:8000", "http://0.0.0.0:8000", "http://172.234.102.252/", "https://harpans.se",
 ]
 
 # Application definition
@@ -154,3 +154,9 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 INSTAGRAM_ACCESS_TOKEN = config('INSTAGRAM_ACCESS_TOKEN', default='')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = "/harpans-kontor/login/"
+
+LOGIN_REDIRECT_URL = "/harpans-kontor/"
+
+LOGOUT_REDIRECT_URL = "/"
