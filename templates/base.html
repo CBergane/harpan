@@ -100,17 +100,21 @@
       <!-- CENTER: Brand -->
       <div class="justify-self-center">
         <a href="/"
-          id="nav-brand"
-          class="flex flex-col items-center text-center leading-none select-none group">
+           id="nav-brand"
+           class="flex flex-col items-center text-center leading-none select-none group">
 
           <div id="nav-logo-box"
-              class="w-20 h-20 rounded-xl bg-background/95 backdrop-blur-sm ring-1 ring-black/5
-                      flex items-center justify-center shadow-sm overflow-hidden
+               class="w-16 h-16 md:w-24 md:h-24 rounded-xl bg-background/95 backdrop-blur-sm
+                      ring-1 ring-black/5 flex items-center justify-center shadow-sm overflow-hidden
                       transition-transform duration-300 group-hover:scale-105">
-            <img src="{% static 'images/icon-harp-final.png' %}" alt="Harpans" class="w-full h-full object-cover">
+            <img src="{% static 'images/icon-harp-final.png' %}"
+                 alt="Harpans"
+                 class="w-full h-full object-contain p-1 md:p-2">
           </div>
+
         </a>
       </div>
+
 
       <!-- RIGHT: CTA + Hamburger -->
       <div class="justify-self-end flex items-center gap-2">
