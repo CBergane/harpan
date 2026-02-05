@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static wagtailsettings_tags wagtailcore_tags %}
+{% get_settings %}
+
+{% block content %}
+
+<section class="min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-background via-white to-background py-16 overflow-hidden relative">
+    <!-- Bakgrundsdekorationer -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="floating-shape absolute top-20 left-10 w-20 h-20 bg-primary-100 rounded-full opacity-30"></div>
+        <div class="floating-shape absolute top-40 right-20 w-32 h-32 bg-accent-100 rounded-full opacity-20" style="animation-delay: 1s"></div>
+        <div class="floating-shape absolute bottom-20 left-1/4 w-24 h-24 bg-primary-100 rounded-full opacity-25" style="animation-delay: 2s"></div>
+        <div class="floating-shape absolute bottom-40 right-1/3 w-16 h-16 bg-accent-100 rounded-full opacity-30" style="animation-delay: 1.5s"></div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-3xl mx-auto text-center">
+            <!-- Ikon + rubrik -->
+            <div class="mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 100ms">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 shadow-lg">
+                    <i data-lucide="alert-triangle" class="w-10 h-10 text-red-600"></i>
+                </div>
+            </div>
+
+            <h1 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4 opacity-0 animate-fade-in-up" style="animation-delay: 300ms">
+                Något gick fel på servern
+            </h1>
+
+            <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed opacity-0 animate-fade-in-up" style="animation-delay: 500ms">
+                Ett oväntat fel inträffade när sidan skulle laddas. Felet är loggat och vi tittar på det så snart vi kan.
+                <br class="hidden md:block">
+                Under tiden kan du prova att gå tillbaka till startsidan eller kontakta oss.
+            </p>
+
+            <!-- Knappar -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-10 opacity-0 animate-fade-in-up" style="animation-delay: 700ms">
+                <a href="/"
+                   class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary-800 text-white font-semibold rounded-xl hover:bg-primary-700 hover:scale-105 hover:shadow-glow-primary transition-all">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span>Till startsidan</span>
+                </a>
+
+                {% if settings.core.NavigationSettings.contact_page %}
+                <a href="{% pageurl settings.core.NavigationSettings.contact_page %}"
+                   class="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-primary-800 text-primary-800 font-semibold rounded-xl hover:bg-primary-800 hover:text-white hover:scale-105 transition-all">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    <span>Kontakta oss</span>
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Liten “try again” / tips -->
+            <div class="opacity-0 animate-fade-in-up" style="animation-delay: 900ms">
+                <p class="text-sm text-gray-500">
+                    Om felet kvarstår när du försöker igen senare får du gärna
+                    <a href="{% if settings.core.NavigationSettings.contact_page %}{% pageurl settings.core.NavigationSettings.contact_page %}{% else %}/kontakt/{% endif %}"
+                       class="text-primary-800 underline">
+                        meddela oss
+                    </a>,
+                    så kan vi undersöka vad som hänt.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes floatingShape {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+        transform: translate(30px, -30px) rotate(120deg);
+    }
+    66% {
+        transform: translate(-20px, 20px) rotate(240deg);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.floating-shape {
+    animation: floatingShape 15s ease-in-out infinite;
+}
+</style>
+
+<script>
+// Se till att ikonerna initieras även på 500-sidan
+try {
+    lucide.createIcons();
+} catch(e) {}
+</script>
+
+{% endblock %}
