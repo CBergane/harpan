@@ -12,6 +12,14 @@
 {# FORMSEKTION – Två kolumner: Skicka meddelande + Bli uppringd #}
 <section class="py-16 bg-gradient-primary">
   <div class="container mx-auto px-4">
+
+    <div class="max-w-3xl mx-auto text-center mb-10">
+      <p class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/30 text-white text-sm md:text-base font-medium">
+        <i data-lucide="info" class="w-4 h-4"></i>
+        <span>Välj det formulär som passar dig bäst – du behöver bara fylla i <strong>ett</strong>.</span>
+      </p>
+    </div>
+
     <div class="grid lg:grid-cols-2 gap-10 lg:gap-20 max-w-6xl mx-auto items-stretch">
       
       {# VÄNSTER KOLUMN – wrapper som drar kortet lite åt höger #}
@@ -19,16 +27,21 @@
         <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-2xl hover:shadow-3xl transition-all opacity-0 w-full max-w-lg h-full flex flex-col"
              data-scroll>
             <div class="text-center mb-8">
-              <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-slow">
-                <i data-lucide="send" class="w-8 h-8 text-primary-800"></i>
-              </div>
-              <h2 class="text-3xl font-bold text-primary-800 mb-3">
-                Skicka ett meddelande
-              </h2>
-              <p class="text-gray-600">
-                Fyll i dina uppgifter så återkommer vi så snart vi kan.
-              </p>
+          <div class="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-800 text-xs font-semibold uppercase tracking-wide mb-3">
+            <span>Alternativ 1 – Skicka meddelande</span>
           </div>
+          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-slow">
+            <i data-lucide="send" class="w-8 h-8 text-primary-800"></i>
+          </div>
+          <h2 class="text-3xl font-bold text-primary-800 mb-3">
+            Skicka ett meddelande
+          </h2>
+          <p class="text-gray-600">
+            Fyll i formuläret nedan så återkommer vi via e-post. 
+            Du kan också välja formuläret bredvid om du föredrar att vi ringer upp.
+          </p>
+        </div>
+
 
           <form
             hx-post="{% url 'contact_submit' %}"
@@ -166,15 +179,19 @@
         <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-10 opacity-0 animate-scale-in w-full max-w-lg h-full flex flex-col"
              style="animation-delay: 200ms" data-scroll>
           <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-800 text-xs font-semibold uppercase tracking-wide mb-3">
+              <span>Alternativ 2 – Bli uppringd</span>
+            </div>
             <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-slow">
               <i data-lucide="phone-call" class="w-8 h-8 text-primary-800"></i>
             </div>
             <h2 class="text-3xl font-bold text-primary-800 mb-3">
               Vill du bli uppringd?
             </h2>
-            <p class="text-gray-600">
-              Lämna dina uppgifter så ringer vi upp dig inom 24 timmar.
-            </p>
+          <p class="text-gray-600">
+            Fyll i formuläret nedan om du vill att vi ringer upp dig. 
+            Du behöver inte fylla i meddelande-formuläret om du väljer detta alternativ.
+          </p>
           </div>
 
           <form
