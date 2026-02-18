@@ -158,9 +158,13 @@
                     overflow-visible
                     transition-transform duration-300">
           <img src="{% static 'images/icon-harp-final.png' %}"
+              srcset="
+                {% static 'images/icon-harp-final.png' %} 1x,
+                {% static 'images/icon-harp-final@2x.png' %} 2x,
+                {% static 'images/icon-harp-final@3x.png' %} 3x
+              "
                alt="Harpans"
-               class="max-w-full max-h-full object-contain p-1 md:p-2 lg:p-3
-                      drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
+               class="max-w-full max-h-full object-contain p-1 md:p-2 lg:p-3">
         </div>
         </a>
       </div>
