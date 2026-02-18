@@ -144,26 +144,25 @@
               </a>
       {% endif %}
       </div>
-
       <!-- CENTER: Brand -->
-      <div class="justify-self-center">
+      <div class="justify-self-center h-full flex items-center">
         <a href="/"
            id="nav-brand"
-           class="flex items-center justify-center select-none group">
-            <img
-              src="{% static 'images/icon-harp-final.png' %}"
-              srcset="
-                {% static 'images/icon-harp-final.png' %} 1x,
-                {% static 'images/icon-harp-final@2x.png' %} 2x,
-                {% static 'images/icon-harp-final@3x.png' %} 3x
-              "
-              alt="Harpans"
-              class="h-full w-auto object-contain
-                     py-1 md:py-1.5 lg:py-2
-                     drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]
-                     transition-transform duration-300 group-hover:scale-[1.03]"
-              draggable="false"
-            />
+           class="h-full flex items-center justify-center select-none group">
+          <img
+            src="{% static 'images/icon-harp-final.png' %}"
+            srcset="
+              {% static 'images/icon-harp-final.png' %} 1x,
+              {% static 'images/icon-harp-final@2x.png' %} 2x,
+              {% static 'images/icon-harp-final@3x.png' %} 3x
+            "
+            alt="Harpans"
+            class="h-full w-auto object-contain
+                   py-1 md:py-1.5 lg:py-2
+                   drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]
+                   transition-transform duration-300 group-hover:scale-[1.015]"
+            draggable="false"
+          />
         </a>
       </div>
       <!-- RIGHT: CTA + Hamburger -->
