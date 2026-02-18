@@ -148,18 +148,19 @@
         <div class="justify-self-center flex items-center h-24 md:h-28 lg:h-32">
           <a href="/" id="nav-brand" class="h-full flex items-center justify-center select-none">
             <img
-              src="{% static 'images/nav-icon@96.png' %}"
+              src="{% static 'images/icon-harp-cropped.png' %}"
               srcset="
-                {% static 'images/nav-icon@96.png' %} 1x,
-                {% static 'images/nav-icon@192.png' %} 2x,
-                {% static 'images/nav-icon@288.png' %} 3x
+                {% static 'images/icon-harp-cropped.png' %} 1x,
+                {% static 'images/icon-harp-cropped@2x.png' %} 2x,
+                {% static 'images/icon-harp-cropped@3x.png' %} 3x
               "
               alt="Harpans"
               draggable="false"
-              class="block h-full w-auto object-contain"
+              class="max-h-full w-auto object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]"
             />
           </a>
         </div>
+
       <!-- RIGHT: CTA + Hamburger -->
       <div class="justify-self-end flex items-center gap-2">
         {% if settings.core.NavigationSettings.booking_url %}
