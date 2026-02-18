@@ -144,11 +144,11 @@
               </a>
       {% endif %}
       </div>
-     <!-- CENTER: Brand -->
-      <div class="justify-self-center flex items-center h-24 md:h-28 lg:h-32">
-        <a href="/"
-           id="nav-brand"
-           class="h-full flex items-center justify-center select-none group overflow-hidden">
+        <!-- CENTER: Brand -->
+        <div class="justify-self-center self-stretch flex items-stretch">
+          <a href="/"
+             id="nav-brand"
+             class="h-full flex items-center justify-center select-none group">
             <img
               src="{% static 'images/icon-harp-final.png' %}"
               srcset="
@@ -157,14 +157,16 @@
                 {% static 'images/icon-harp-final@3x.png' %} 3x
               "
               alt="Harpans"
-              class="h-[72px] md:h-[88px] lg:h-[104px] w-auto object-contain
-                     drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]
-                     transition-transform duration-300 group-hover:scale-[1.015]"
               draggable="false"
+              class="h-full w-auto object-contain
+                     py-1 md:py-1.5 lg:py-2
+                     scale-[1.12] md:scale-[1.10] lg:scale-[1.08]
+                     drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]
+                     transition-transform duration-300
+                     group-hover:scale-[1.14] md:group-hover:scale-[1.12] lg:group-hover:scale-[1.10]"
             />
-        </a>
-      </div>
-
+          </a>
+        </div>
       <!-- RIGHT: CTA + Hamburger -->
       <div class="justify-self-end flex items-center gap-2">
         {% if settings.core.NavigationSettings.booking_url %}
