@@ -144,13 +144,15 @@
               </a>
       {% endif %}
       </div>
-        <!-- CENTER: Brand (ikon + HTML-text) -->
+       <!-- CENTER: Brand (ikon + text UNDER) -->
         <div class="justify-self-center">
           <a href="/"
              id="nav-brand"
-             class="flex items-center justify-center gap-3 select-none">
+             class="flex flex-col items-center justify-center select-none
+                    leading-none text-center
+                    max-w-[160px] md:max-w-[180px] lg:max-w-[220px]">
         
-            <!-- IKONEN -->
+            <!-- IKON -->
             <img
               src="{% static 'images/nav-icon@96.png' %}"
               srcset="
@@ -159,27 +161,18 @@
                 {% static 'images/nav-icon@288.png' %} 3x
               "
               alt="Harpans"
-              width="96" height="96"
-              class="h-14 md:h-16 lg:h-20 w-auto object-contain
+              class="h-12 md:h-14 lg:h-16 w-auto object-contain
                      drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]"
               draggable="false"
             />
         
-            <!-- TEXTEN (skarpt + i stil med loggan) -->
-            <span class="leading-none text-center">
-              <span class="block font-extrabold uppercase tracking-[0.08em]
-                           text-primary-900 text-[12px] md:text-[13px] lg:text-[14px]">
-                Harpans Redovisning
-              </span>
-              <!-- valfri liten “subtitle”-rad, om ni vill -->
-              <!--
-              <span class="block font-semibold tracking-widest uppercase
-                           text-primary-900/70 text-[9px] md:text-[10px]">
-                Redovisning
-              </span>
-              -->
+            <!-- TEXT UNDER (som originalen) -->
+            <span class="mt-1 font-extrabold uppercase tracking-[0.08em]
+                         text-primary-900
+                         text-[10px] md:text-[11px] lg:text-[12px]
+                         whitespace-nowrap">
+              Harpans Redovisning
             </span>
-        
           </a>
         </div>
 
