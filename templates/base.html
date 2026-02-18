@@ -150,19 +150,20 @@
         <a href="/"
            id="nav-brand"
            class="flex items-center justify-center select-none group">
-          <img
-            src="{% static 'images/icon-harp-final.png' %}"
-            srcset="
-              {% static 'images/icon-harp-final.png' %} 1x,
-              {% static 'images/icon-harp-final@2x.png' %} 2x,
-              {% static 'images/icon-harp-final@3x.png' %} 3x
-            "
-            alt="Harpans"
-            class="h-20 md:h-24 lg:h-28 w-auto object-contain
-                   drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]
-                   transition-transform duration-300 group-hover:scale-[1.03]"
-            draggable="false"
-          >
+            <img
+              src="{% static 'images/icon-harp-final.png' %}"
+              srcset="
+                {% static 'images/icon-harp-final.png' %} 1x,
+                {% static 'images/icon-harp-final@2x.png' %} 2x,
+                {% static 'images/icon-harp-final@3x.png' %} 3x
+              "
+              alt="Harpans"
+              class="h-full w-auto object-contain
+                     py-1 md:py-1.5 lg:py-2
+                     drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]
+                     transition-transform duration-300 group-hover:scale-[1.03]"
+              draggable="false"
+            />
         </a>
       </div>
       <!-- RIGHT: CTA + Hamburger -->
