@@ -93,3 +93,13 @@ SECURE_REFERRER_POLICY = 'same-origin'
 
 # Wagtail
 WAGTAILADMIN_BASE_URL = config('WAGTAILADMIN_BASE_URL', default='http://localhost:8000')
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "/var/cache/harpans/django-cache",
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000,
+        },
+    }
+}
